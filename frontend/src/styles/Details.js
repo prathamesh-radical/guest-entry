@@ -1,0 +1,62 @@
+import { StyleSheet } from "react-native";
+
+export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        backgroundColor: "#fff",
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        backgroundColor: "#fff",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#fff",
+        paddingVertical: !isPortrait && height * 0.05,
+        paddingHorizontal: !isPortrait&& height * 0.1,
+    },
+    data_table: {
+        flex: 1,
+        backgroundColor: '#fff',
+        justifyContent: "center",
+    },
+    scroll_view: {
+        flexGrow: 1,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignContent: 'center',
+        paddingVertical: 15,
+    },
+    md_th: {
+        fontWeight: "bold",
+        color: "#000",
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        flex: 0.7,
+        borderColor: "#ccc",
+        borderBottomWidth: 1,
+        borderLeftWidth: 1,
+        borderTopWidth: 1,
+        textAlign: "left",
+        flexWrap: 'wrap',
+    },
+    md_td: {
+        fontWeight: "bold",
+        color: "#000",
+        backgroundColor: "#F8F8F8",
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        flex: 1.5,
+        borderColor: "#ccc",
+        borderBottomWidth: 1,
+        borderRightWidth: 1,
+        borderTopWidth: 1,
+        textAlign: "left",
+        flexWrap: 'wrap',
+    },
+    bold_text: {
+        fontWeight: "bold",
+        paddingHorizontal: 10,
+        fontSize: 15,
+    },
+});

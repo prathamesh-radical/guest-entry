@@ -1,0 +1,95 @@
+import { StyleSheet } from 'react-native';
+
+export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#1A1A1A',
+        borderRadius: 16,
+        marginBottom: 16,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: '#2A2A2A',
+    },
+    modalContent: {
+        backgroundColor: '#161616',
+        padding: 30,
+        borderRadius: 10,
+        width: isPortrait ? '90%' : '60%',
+        borderWidth: 1,
+        borderColor: '#2A2A2A',
+    },
+    modalTitle: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 16,
+    },
+    label: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '500',
+        marginBottom: 4,
+    },
+    nameContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: "4%",
+        width: "100%",
+    },
+    nameFieldContainer: {
+        flex: 1,
+        justifyContent: "center",
+    },
+    nameField: {
+        backgroundColor: '#2A2A2A',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        color: '#fff',
+        fontSize: 16,
+        marginTop: 5,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#333',
+    },
+    inputField: {
+        backgroundColor: '#2A2A2A',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        color: '#fff',
+        fontSize: 16,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#333',
+        width: "100%",
+    },
+    dropdownStyle: {
+        borderColor: "#333",
+        backgroundColor: "#2A2A2A",
+        minHeight: 45,
+        paddingHorizontal: 15,
+        marginBottom: 10,
+    },
+    dropDownContainerStyle: {
+        borderColor: "#333",
+        backgroundColor: "#2A2A2A",
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        gap: "4%",
+        marginVertical: 8
+,    },
+    button: {
+        justifyContent: 'center',
+        alignContent: 'center',
+        borderRadius: 10,
+        width: '48%',
+        height: 45,
+    },
+    buttonLabelStyle: {
+        color: '#fff',
+        fontSize: 18,
+    },
+});

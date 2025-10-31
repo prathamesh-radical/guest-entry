@@ -1,0 +1,243 @@
+import { StyleSheet } from "react-native";
+
+export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#1a1f26',
+    },
+    header: {
+        flexDirection: 'row',
+        paddingTop: 10,
+        paddingBottom: 12,
+        backgroundColor: '#1a1f26',
+        paddingHorizontal: isPortrait ? 0 : "1%", 
+    },
+    headerTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 4,
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        color: '#94a3b8',
+    },
+    filterByDateButton: {
+        flex: 1,
+        gap: 5,
+        backgroundColor: '#252d36',
+        borderRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+        height: 45,
+    },
+    filterDateContainer: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+    },
+    filterPlaceholder: {
+        color: '#888',
+        fontSize: 14,
+    },
+    filterSection: {
+        backgroundColor: '#0f1419',
+        padding: 16,
+        marginBottom: 15,
+        borderRadius: 10,
+    },
+    filterMainContainer: {
+        flex: 1,
+        flexDirection: !isPortrait && 'row',
+        justifyContent: !isPortrait && 'space-between',
+        alignItems: !isPortrait && 'center',
+        gap: 5,
+        width: '100%',
+    },
+    filterSubContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        marginRight: isPortrait ? 0 : "3%",
+        width: '100%',
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 16,
+    },
+    searchRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+        gap: 5,
+        width: '100%',
+    },
+    searchBar: {
+        backgroundColor: '#252d36',
+        borderRadius: 8,
+        elevation: 0,
+        height: 45,
+        width: isPortrait ? "58%" : "68%",
+        marginRight: 5,
+    },
+    searchInput: {
+        color: '#fff',
+        fontSize: 14,
+        marginTop: isPortrait ? "-2.2%" : "-2%",
+        width: "61%",
+    },
+    dateButton: {
+        backgroundColor: '#2a323c',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: "20%",
+    },
+    dateButtonText: {
+        color: '#fff',
+        fontSize: 14,
+    },
+    filterRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    statsContainer: {
+        flexDirection: 'row',
+        width: isPortrait ? '100%' : '25%',
+        marginTop: !isPortrait && "-2%",
+        borderRadius: 12,
+    },
+    statCard: {
+        flex: 1,
+        borderRadius: 12,
+        paddingVertical: isPortrait ? 16 : "14%",
+        paddingHorizontal: isPortrait ? "10%" : "15%",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    statLabel: {
+        color: '#fff',
+        fontSize: 14,
+        opacity: 0.9,
+    },
+    statContent: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    statNumber: {
+        color: '#fff',
+        fontSize: 28,
+        fontWeight: 'bold',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContainer: {
+        padding: 15,
+        paddingTop: 0,
+        paddingHorizontal: isPortrait ? "4%" : "7%",
+    },
+    visitorListContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: isPortrait ? 'center' : 'space-between',
+        gap: isPortrait ? 0 : 12,
+    },
+    visitorCard: {
+        backgroundColor: '#0f1419',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 15,
+        borderLeftWidth: 3,
+        borderLeftColor: '#6600ff',
+        boxShadow: '0px 2px 4px #6600ff',
+        width: isPortrait ? "100%" : "48%",
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 12,
+    },
+    cardHeaderLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        flex: 1,
+    },
+    visitorNumber: {
+        backgroundColor: '#26A69A',
+        fontSize: 14,
+        paddingVertical: 3,
+        paddingHorizontal: 8,
+        borderRadius: 8,
+        color: '#ccc',
+        fontWeight: '600',
+    },
+    visitorName: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+        flex: 1,
+    },
+    statusBadge: {
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    statusActive: {
+        backgroundColor: '#22c55e',
+    },
+    statusDeparted: {
+        backgroundColor: '#64748b',
+    },
+    statusText: {
+        color: '#fff',
+        fontSize: 11,
+        fontWeight: '600',
+    },
+    dateTime: {
+        color: '#94a3b8',
+        fontSize: 12,
+    },
+    cardBody: {
+        gap: 8,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    infoIcon: {
+        margin: 0,
+        marginRight: 4,
+    },
+    infoText: {
+        color: '#cbd5e1',
+        fontSize: 13,
+        flex: 1,
+    },
+    noDataContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 60,
+    },
+    noDataText: {
+        color: '#94a3b8',
+        fontSize: 16,
+    },
+    selectedDate: {
+        color: '#fff',
+        fontSize: 14,
+    },
+    closeBtn: {
+        borderColor: "red",
+    },
+});
