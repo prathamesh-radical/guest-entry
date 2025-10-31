@@ -2,6 +2,7 @@ package com.visitq
 
 import android.app.Application
 import com.facebook.react.PackageList
+import org.devio.rn.splashscreen.SplashScreenReactPackage
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
@@ -20,6 +21,14 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              // Add react-native-lottie-splash-screen manually if autolinking didn't pick it up
+              try {
+                add(SplashScreenReactPackage())
+              } catch (e: Exception) {
+                // Log to help diagnose autolinking/registering issues during app startup
+                // (Don't crash the app if adding the package fails)
+                e.printStackTrace()
+              }
             }
 
         override fun getJSMainModuleName(): String = "index"
