@@ -280,7 +280,6 @@ export default function Reports() {
 
             getFilteredData.forEach(visitor => {
                 const checkinTime = new Date(visitor.datetime).toLocaleString('en-GB');
-                console.log("visitor", visitor);
                 wsData.push([
                     checkinTime,
                     visitor.first_name + ' ' + visitor.last_name || 'N/A',
