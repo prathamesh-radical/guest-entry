@@ -8,18 +8,7 @@ import SplashScreen from 'react-native-lottie-splash-screen';
 
 export default function App() {
   useEffect(() => {
-    if (SplashScreen && typeof SplashScreen.hide === 'function') {
-      try {
-        SplashScreen.hide();
-      } catch (e) {
-        console.warn('SplashScreen.hide() failed:', e);
-      }
-    } else {
-      console.warn(
-        'SplashScreen native module is null. Did you rebuild the app after installing the package?',
-      );
-    }
-
+    SplashScreen.hide();
     Appearance.setColorScheme('light');
   }, []);
 
