@@ -4,10 +4,12 @@ import { MyContextProvider } from './src/context/ContextProvider';
 import AppContent from './src/AppContent';
 import { NavigationContainer } from '@react-navigation/native';
 import { navigationRef } from './src/navigation/NavigationService';
+import SplashScreen from 'react-native-lottie-splash-screen';
 
 export default function App() {
   useEffect(() => {
-      Appearance.setColorScheme('light');
+    SplashScreen.hide();
+    Appearance.setColorScheme('light');
   }, []);
 
   return (
