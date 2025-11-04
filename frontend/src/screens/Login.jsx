@@ -30,10 +30,11 @@ export default function Login() {
 
     return (
         <ScrollView
-            style={{ flexGrow: 1 }}
+            style={{ flex: 1 }}
             contentContainerStyle={styles.container}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled={true}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#1E80DE']} />}
         >
             <AnimatedScreen style={styles.animatedWrapper}>
