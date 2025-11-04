@@ -17,7 +17,7 @@ export default function useFunctions() {
         setLoading(true);
 
         try {
-            const response = await fetch(`http://192.168.1.30:3000/api/auth/register`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +33,6 @@ export default function useFunctions() {
                     title: "Oops!",
                     message: data.message,
                 });
-                console.log("data", data);
             } else {
                 showToast({
                     type: 'success',
@@ -53,7 +52,6 @@ export default function useFunctions() {
                 title: "Oops!",
                 message: error.message,
             });
-            console.log("error", error);
         } finally {
             setLoading(false);
         }
@@ -248,7 +246,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/updateUserData?user_id=${Number(id)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/updateUserData?user_id=${Number(id)}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -293,7 +291,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/updateUserPassword?user_id=${Number(id)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/updateUserPassword?user_id=${Number(id)}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
