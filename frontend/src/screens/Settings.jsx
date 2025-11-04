@@ -4,21 +4,27 @@ import useFunctions from '../hooks/useFunctions';
 import { AnimatedScreen } from '../components/AnimatedScreen';
 import { useCallback, useContext, useState } from 'react';
 import { MyContext } from '../context/ContextProvider';
-import { Avatar, Icon, IconButton, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Divider, Icon, IconButton, TextInput } from 'react-native-paper';
 import { Styles } from '../styles/Settings';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default function SettingScreen() {
-    const { userData, refreshKey, refreshing, onRefresh, visitorData, orientation, setGradientColor, userDataToUpdate, handleChange } = useContext(MyContext);
-    const { Wrapper, handleUpdateUserData } = useFunctions();
+    const {
+        loading, userData, refreshKey, refreshing, onRefresh, visitorData, orientation, setGradientColor, userDataToUpdate, userPasswordUpdate, handleChange
+    } = useContext(MyContext);
+    const { Wrapper, handleUpdateUserData, handleUpdateUserPassword } = useFunctions();
+
+    const [passwordVisible, setPasswordVisible] = useState({ current: false, newPass: false, confirm: false });
     const route = useRoute();
     const navigation = useNavigation();
     const [isEditing, setIsEditing] = useState(false);
+    const [showForm, setShowForm] = useState(false);
     const { height, width } = Dimensions.get('window');
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
     const userName = userData[0]?.first_name + ' ' + userData[0]?.last_name;
     const initials = (userData[0]?.first_name?.[0] || '').toUpperCase() + (userData[0]?.last_name?.[0] || '').toUpperCase();
+    const isForm = showForm === true;
 
     let daysActive = 0;
     if (userData[0]?.date) {
@@ -35,6 +41,10 @@ export default function SettingScreen() {
             return;
         }, [refreshKey])
     );
+
+    const togglePasswordVisibility = (field) => {
+        setPasswordVisible(prev => ({ ...prev, [field]: !prev[field] }));
+    };
 
     const handleSave = async (event) => {
         event.preventDefault();
@@ -102,39 +112,99 @@ export default function SettingScreen() {
                             </View>
                         </View>
                         <View style={styles.infoItem}>
-                            <Text style={styles.label}>Full name</Text>
-                            <View style={styles.inputContainer}>
-                                <TextInput
-                                    left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
-                                    style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5", width: "50%" }]}
-                                    textColor='#fff'
-                                    placeholder="First Name"
-                                    placeholderTextColor="#aaa"
-                                    value={userDataToUpdate?.first_name || ''}
-                                    keyboardType="default"
-                                    onChangeText={(text) => handleChange("first_name")(text)}
-                                    underlineColor="transparent"
-                                    activeUnderlineColor="transparent"
-                                    cursorColor='#fff'
-                                    editable={isEditing}
-                                />
-                                <TextInput
-                                    left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
-                                    style={[styles.inputField, { 
-                                        backgroundColor: "#1D2C2D", borderColor: "#1E88E5", width: isPortrait ? "47%" : "48%"
-                                    }]}
-                                    textColor='#fff'
-                                    placeholder="Last Name"
-                                    placeholderTextColor="#aaa"
-                                    value={userDataToUpdate?.last_name || ''}
-                                    keyboardType="default"
-                                    onChangeText={(text) => handleChange("last_name")(text)}
-                                    underlineColor="transparent"
-                                    activeUnderlineColor="transparent"
-                                    cursorColor='#fff'
-                                    editable={isEditing}
-                                />
-                            </View>
+                            {!isPortrait && (
+                                <View style={styles.inputContainer}>
+                                    <View style={styles.inputFieldWrapper}>
+                                        <View style={{ width: "100%" }}>
+                                            <Text style={styles.label}>First Name</Text>
+                                            <TextInput
+                                                left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
+                                                style={[styles.inputField, {
+                                                    backgroundColor: "#1D2C2D", borderColor: "#1E88E5", width: "100%", marginTop: 5,
+                                                }]}
+                                                textColor='#fff'
+                                                placeholder="First Name"
+                                                placeholderTextColor="#aaa"
+                                                value={userDataToUpdate?.first_name || ''}
+                                                keyboardType="default"
+                                                onChangeText={(text) => handleChange("first_name")(text)}
+                                                underlineColor="transparent"
+                                                activeUnderlineColor="transparent"
+                                                cursorColor='#fff'
+                                                editable={isEditing}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ width: "48%" }}>
+                                        <Text style={styles.label}>Last Name</Text>
+                                        <TextInput
+                                            left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
+                                            style={[styles.inputField, {
+                                                backgroundColor: "#1D2C2D", borderColor: "#1E88E5", width: "100%", marginTop: 5,
+                                            }]}
+                                            textColor='#fff'
+                                            placeholder="Last Name"
+                                            placeholderTextColor="#aaa"
+                                            value={userDataToUpdate?.last_name || ''}
+                                            keyboardType="default"
+                                            onChangeText={(text) => handleChange("last_name")(text)}
+                                            underlineColor="transparent"
+                                            activeUnderlineColor="transparent"
+                                            cursorColor='#fff'
+                                            editable={isEditing}
+                                        />
+                                    </View>
+                                </View>
+                            )}
+                            {isPortrait && (
+                                <>
+                                    <Text style={styles.label}>First Name</Text>
+                                    <TextInput
+                                        left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
+                                        style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
+                                        textColor='#fff'
+                                        placeholder="First Name"
+                                        placeholderTextColor="#aaa"
+                                        value={userDataToUpdate?.first_name || ''}
+                                        keyboardType="default"
+                                        onChangeText={(text) => handleChange("first_name")(text)}
+                                        underlineColor="transparent"
+                                        activeUnderlineColor="transparent"
+                                        cursorColor='#fff'
+                                        editable={isEditing}
+                                    />
+                                    <Text style={[styles.label, { marginTop: 10 }]}>Last Name</Text>
+                                    <TextInput
+                                        left={<TextInput.Icon icon="account-outline" color="#26A69A" />}
+                                        style={[styles.inputField, { backgroundColor: "#202D26", borderColor: "#26A69A" }]}
+                                        textColor='#fff'
+                                        placeholder="Last Name"
+                                        placeholderTextColor="#aaa"
+                                        value={userDataToUpdate?.last_name || ''}
+                                        keyboardType="default"
+                                        onChangeText={(text) => handleChange("last_name")(text)}
+                                        underlineColor="transparent"
+                                        activeUnderlineColor="transparent"
+                                        cursorColor='#fff'
+                                        editable={isEditing}
+                                    />
+                                </>
+                            )}
+                            <Text style={[styles.label, { marginTop: 10 }]}>Phone Number</Text>
+                            <TextInput
+                                left={<TextInput.Icon icon="phone-outline" color="#1E88E5" />}
+                                style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
+                                textColor='#fff'
+                                placeholder="Phone Number"
+                                placeholderTextColor="#aaa"
+                                value={userDataToUpdate?.phone_no != null ? String(userDataToUpdate.phone_no) : ''}
+                                keyboardType="numeric"
+                                onChangeText={(text) => handleChange("phone_no")(text)}
+                                underlineColor="transparent"
+                                activeUnderlineColor="transparent"
+                                cursorColor='#fff'
+                                editable={isEditing}
+                            />
                             <Text style={[styles.label, { marginTop: 10 }]}>Email Address</Text>
                             <TextInput
                                 left={<TextInput.Icon icon="email-outline" color="#26A69A" />}
@@ -150,37 +220,91 @@ export default function SettingScreen() {
                                 cursorColor='#fff'
                                 editable={isEditing}
                             />
-                            <Text style={[styles.label, { marginTop: 10 }]}>Password</Text>
-                            <TextInput
-                                left={<TextInput.Icon icon="lock-outline" color="#1E88E5" />}
-                                style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
-                                textColor='#fff'
-                                placeholder="Password"
-                                placeholderTextColor="#aaa"
-                                value={userDataToUpdate?.password || ''}
-                                keyboardType="default"
-                                onChangeText={(text) => handleChange("password")(text)}
-                                underlineColor="transparent"
-                                activeUnderlineColor="transparent"
-                                cursorColor='#fff'
-                                secureTextEntry={true}
-                                editable={isEditing}
+                        </View>
+                    </View>
+                    <View style={styles.sectionHeader}>
+                        <View style={styles.sectionTitleContainer}>
+                            <Icon source="circle" size={10} color="#1B7EDA" />
+                            <Text style={styles.sectionTitle}>Security Information</Text>
+                        </View>
+                        <View style={styles.infoItem}>
+                            <View style={styles.securityContainer}>
+                                <Icon source="shield-lock" size={40} color="#EE4242" />
+                                <View style={styles.securityTextContainer}>
+                                    <Text style={styles.securityLabel}>Security Settings</Text>
+                                    <Text style={styles.securityDescription}>Manage your password and security preferences</Text>
+                                </View>
+                            </View>
+                            <Button
+                                icon={isForm ? "lock-off" : "lock-reset"}
+                                children={isForm ? "Cancel Change Password" : "Change Password"}
+                                mode="contained-tonal"
+                                style={[styles.button, { backgroundColor: isForm ? '#EE4242' : '#1E90FF' }]}
+                                labelStyle={styles.buttonLabelStyle}
+                                onPress={() => setShowForm(!showForm)}
                             />
-                            <TextInput
-                                left={<TextInput.Icon icon="lock-outline" color="#1E88E5" />}
-                                style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
-                                textColor='#fff'
-                                placeholder="Confirm Password"
-                                placeholderTextColor="#aaa"
-                                value={userDataToUpdate?.confirm_password || ''}
-                                keyboardType="default"
-                                onChangeText={(text) => handleChange("confirm_password")(text)}
-                                underlineColor="transparent"
-                                activeUnderlineColor="transparent"
-                                cursorColor='#fff'
-                                secureTextEntry={true}
-                                editable={isEditing}
-                            />
+                            {showForm && (
+                                <>
+                                    <Divider style={styles.divider} />
+                                    <Text style={styles.label}>Current Password</Text>
+                                    <TextInput
+                                        left={<TextInput.Icon icon="lock-outline" color="#1E88E5" />}
+                                        right={<TextInput.Icon icon={passwordVisible.current ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('current')} />}
+                                        style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
+                                        textColor='#fff'
+                                        placeholder="Current Password"
+                                        placeholderTextColor="#aaa"
+                                        value={userPasswordUpdate?.current_password || ''}
+                                        keyboardType="default"
+                                        onChangeText={(text) => handleChange("current_password")(text)}
+                                        underlineColor="transparent"
+                                        activeUnderlineColor="transparent"
+                                        cursorColor='#fff'
+                                        secureTextEntry={!passwordVisible.current}
+                                    />
+                                    <Text style={[styles.label, { marginTop: 10 }]}>New Password</Text>
+                                    <TextInput
+                                        left={<TextInput.Icon icon="lock-outline" color="#26A69A" />}
+                                        right={<TextInput.Icon icon={passwordVisible.newPass ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('newPass')} />}
+                                        style={[styles.inputField, { backgroundColor: "#202D26", borderColor: "#26A69A" }]}
+                                        textColor='#fff'
+                                        placeholder="New Password"
+                                        placeholderTextColor="#aaa"
+                                        value={userPasswordUpdate?.new_password || ''}
+                                        keyboardType="default"
+                                        onChangeText={(text) => handleChange("new_password")(text)}
+                                        underlineColor="transparent"
+                                        activeUnderlineColor="transparent"
+                                        cursorColor='#fff'
+                                        secureTextEntry={!passwordVisible.newPass}
+                                    />
+                                    <Text style={[styles.label, { marginTop: 10 }]}>Confirm New Password</Text>
+                                    <TextInput
+                                        left={<TextInput.Icon icon="lock-outline" color="#1E88E5" />}
+                                        right={<TextInput.Icon icon={passwordVisible.confirm ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('confirm')} />}
+                                        style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
+                                        textColor='#fff'
+                                        placeholder="Confirm New Password"
+                                        placeholderTextColor="#aaa"
+                                        value={userPasswordUpdate?.confirm_password || ''}
+                                        keyboardType="default"
+                                        onChangeText={(text) => handleChange("confirm_password")(text)}
+                                        underlineColor="transparent"
+                                        activeUnderlineColor="transparent"
+                                        cursorColor='#fff'
+                                        secureTextEntry={!passwordVisible.confirm}
+                                    />
+                                    <Button
+                                        icon={!loading ? "lock-check" : undefined}
+                                        mode="contained-tonal"
+                                        style={[styles.button, { backgroundColor: '#0EB57F' }]}
+                                        labelStyle={styles.buttonLabelStyle}
+                                        onPress={(event) => handleUpdateUserPassword(event, setShowForm)}
+                                    >
+                                        {loading ? <ActivityIndicator size="small" color="#fff" /> : "Update Password"}
+                                    </Button>
+                                </>
+                            )}
                         </View>
                     </View>
                     <View style={styles.statsContainer}>

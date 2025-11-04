@@ -8,7 +8,7 @@ import { Image, StyleSheet, View } from 'react-native';
 
 export default function useFunctions() {
     const {
-        setWrapperProps, showToast, registerFormData, handleSetNull, setLoading, loginFormData, toggleModal, triggerDataRefresh, apartment, handleLogout, flatFormData, visitorFormData, userDataToUpdate
+        setWrapperProps, showToast, registerFormData, handleSetNull, setLoading, loginFormData, toggleModal, triggerDataRefresh, apartment, handleLogout, flatFormData, visitorFormData, userDataToUpdate, userPasswordUpdate,
     } = useContext(MyContext);
     const navigation = useNavigation();
 
@@ -17,7 +17,7 @@ export default function useFunctions() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${Config.BACKEND_URL}/api/auth/register`, {
+            const response = await fetch(`http://192.168.1.30:3000/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,6 +33,7 @@ export default function useFunctions() {
                     title: "Oops!",
                     message: data.message,
                 });
+                console.log("data", data);
             } else {
                 showToast({
                     type: 'success',
@@ -52,6 +53,7 @@ export default function useFunctions() {
                 title: "Oops!",
                 message: error.message,
             });
+            console.log("error", error);
         } finally {
             setLoading(false);
         }
@@ -246,7 +248,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`${Config.BACKEND_URL}/api/updateUserData?user_id=${Number(id)}`, {
+            const response = await fetch(`http://192.168.1.30:3000/api/updateUserData?user_id=${Number(id)}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -272,6 +274,52 @@ export default function useFunctions() {
                 navigation.navigate("Settings");
                 handleSetNull();
                 triggerDataRefresh();
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                title: "Oops!",
+                message: error.message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleUpdateUserPassword(event, setShowForm) {
+        event.preventDefault();
+        setLoading(true);
+
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const id = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/updateUserPassword?user_id=${Number(id)}`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(userPasswordUpdate),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showToast({
+                    type: 'error',
+                    title: "Oops!",
+                    message: data.message,
+                });
+            } else {
+                showToast({
+                    type: 'success',
+                    title: "Good!",
+                    message: data.message,
+                });
+                navigation.navigate("Settings");
+                handleSetNull();
+                triggerDataRefresh();
+                setShowForm(false);
             }
         } catch (error) {
             showToast({
@@ -345,7 +393,9 @@ export default function useFunctions() {
         });
     }
 
-    return { Wrapper, handleUserRegister, handleLogin, handleAddApartment, handleAddFlat, handleAddVisitor, handleUpdateUserData, handleLogoutAction };
+    return {
+        Wrapper, handleUserRegister, handleLogin, handleAddApartment, handleAddFlat, handleAddVisitor, handleUpdateUserData, handleUpdateUserPassword, handleLogoutAction
+    };
 }
 
 const styles = StyleSheet.create({

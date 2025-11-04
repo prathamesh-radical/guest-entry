@@ -82,6 +82,24 @@ export function NameInput({ styles, value, placeholder, onChangeText }) {
             activeOutlineColor='#1E88E5'
             mode='outlined'
             left={<TextInput.Icon icon="account-outline" color="#D3D5D6" />}
+            textColor='#fff'
+        />
+    );
+}
+
+export function NumberInput({ styles, value, placeholder, onChangeText }) {
+    return (
+        <TextInput
+            style={styles}
+            placeholder={placeholder}
+            placeholderTextColor="#aaa"
+            value={value}
+            keyboardType="numeric"
+            onChangeText={onChangeText}
+            activeOutlineColor='#1E88E5'
+            mode='outlined'
+            left={<TextInput.Icon icon="phone" color="#D3D5D6" />}
+            textColor='#fff'
         />
     );
 }

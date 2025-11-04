@@ -182,8 +182,17 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     },
     inputContainer: {
         flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
         flexDirection: "row",
-        gap: 10,
+        gap: 20,
+    },
+    inputFieldWrapper: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        width: "100%",
     },
     inputField: {
         color:"#000",
@@ -195,6 +204,47 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         borderRadius: 10,
         backgroundColor: "#F8F8F8",
         paddingHorizontal: 15,
+    },
+    securityContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10,
+        backgroundColor: '#0f1419',
+        borderRadius: 10,
+    },
+    securityTextContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        gap: 4,
+    },
+    securityLabel: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#fff',
+    },
+    securityDescription: {
+        fontSize: 13,
+        color: '#888',
+    },
+    button: {
+        flex: 1,
+        justifyContent: 'center',
+        alignContent: 'center',
+        borderRadius: 10,
+        height: 45,
+        marginTop: "4%",
+    },
+    buttonLabelStyle: {
+        color: '#fff',
+        fontSize: 14,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        marginVertical: 16,
     },
 
     // Info Card

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import db from "../db/db.js";
 
 export const AdminRegister = async (req, res) => {
-    const { first_name, last_name, email, password, confirm_password } = req.body;
+    const { first_name, last_name, phone_no, email, password, confirm_password } = req.body;
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(!emailPattern.test(email)) {
@@ -21,14 +21,16 @@ export const AdminRegister = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         db.query("SELECT * FROM registration WHERE email = ?", [email], (err, result) => {
+            console.log("err", err);
             if (result.length > 0) {
                 return res.status(400).json({ message: "User already exists", success: false });
             } else {
                 db.query(
-                    "INSERT INTO registration (first_name, last_name, email, password) VALUES (?, ?, ?, ?)",
-                    [first_name, last_name, email, hashedPassword],
+                    "INSERT INTO registration (first_name, last_name, phone_no, email, password) VALUES (?, ?, ?, ?, ?)",
+                    [first_name, last_name, phone_no, email, hashedPassword],
                     (err, result) => {
                         if (err) {
+                            console.log("err", err);
                             return res.status(500).json({ message: "Error while registering you", success: false });
                         }
                         return res.status(200).json({ message: "User Registered Successfully", success: true });
@@ -37,7 +39,7 @@ export const AdminRegister = async (req, res) => {
             }
         });
     } catch (error) {
-        console.log("Error", error);
+        console.log("error", error);
         return res.status(500).json({ message: "Internal Server Error", success: false })
     }
 };

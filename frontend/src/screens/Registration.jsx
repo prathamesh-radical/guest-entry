@@ -7,7 +7,7 @@ import { AnimatedScreen } from '../components/AnimatedScreen';
 import { ActivityIndicator, Button, Icon } from 'react-native-paper';
 import { MyContext } from '../context/ContextProvider';
 import LinearGradient from 'react-native-linear-gradient';
-import EmailInput, { ConfirmPasswordInput, NameInput, PasswordInput } from '../ui/InputFields';
+import EmailInput, { ConfirmPasswordInput, NameInput, NumberInput, PasswordInput } from '../ui/InputFields';
 import LoadingScreen from './LoadingScreen';
 
 export default function Registration() {
@@ -37,13 +37,12 @@ export default function Registration() {
             end={{ x: 1, y: 1 }}
         >
             <AnimatedScreen style={styles.container}>
-            <ScrollView
-                contentContainerStyle={styles.scrollContainer}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#E53B35']} />}
-            >
-                
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#E53B35']} />}
+                >
                     <View style={styles.iconContainer}>
                         <Icon source="shield-outline" size={35} color="#fff" />
                     </View>
@@ -70,7 +69,15 @@ export default function Registration() {
                                 />
                             </View>
                         </View>
-                        <Text style={styles.label}>Email Address *</Text>
+                        <Text style={styles.label}>Phone Number *</Text>
+                        <NumberInput
+                            placeholder="+1234567890"
+                            styles={styles.inputField}
+                            contentStyles={styles.inputFieldContent}
+                            value={formData.phone_no}
+                            onChangeText={(text) => handleChange("phone_no")(text)}
+                        />
+                        <Text style={[styles.label, { marginTop: 10 }]}>Email Address *</Text>
                         <EmailInput
                             placeholder="john@example.com"
                             styles={styles.inputField}
@@ -89,8 +96,8 @@ export default function Registration() {
                         <ConfirmPasswordInput
                             styles={styles.inputField}
                             contentStyles={styles.inputFieldContent}
-                            value={formData.password}
-                            onChangeText={(text) => handleChange("password")(text)}
+                            value={formData.confirm_password}
+                            onChangeText={(text) => handleChange("confirm_password")(text)}
                         />
                         <Button
                             children="Create Account"
@@ -107,8 +114,7 @@ export default function Registration() {
                             </Text>
                         </Text>
                     </View>
-                
-            </ScrollView>
+                </ScrollView>
             </AnimatedScreen>
         </LinearGradient>
     );
