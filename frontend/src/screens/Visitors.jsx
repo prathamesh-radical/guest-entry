@@ -293,25 +293,25 @@ export default function Visitors() {
 
                                     <View style={styles.infoRow}>
                                         <IconButton icon="map-marker" size={16} iconColor="#888" style={styles.infoIcon} />
-                                        <Text style={styles.infoText}>{item.address || 'N/A'}</Text>
+                                        <Text style={styles.infoText}>{item.address}</Text>
                                     </View>
 
                                     <View style={styles.infoRow}>
                                         <IconButton icon="car" size={16} iconColor="#888" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>
-                                            {item.vehicle_type || 'N/A'} - {item.vehicle_no || 'N/A'}
+                                            {item.vehicle_type} {item.vehicle_no && `- ${item.vehicle_no}`}
                                         </Text>
                                     </View>
 
                                     <View style={styles.infoRow}>
                                         <IconButton icon="account-group" size={16} iconColor="#888" style={styles.infoIcon} />
-                                        <Text style={styles.infoText}>Meeting: {item.person_to_meet || 'N/A'}</Text>
+                                        <Text style={styles.infoText}>Meeting: {item.person_to_meet}</Text>
                                     </View>
 
                                     <View style={styles.infoRow}>
                                         <IconButton icon="office-building" size={16} iconColor="#888" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>
-                                            {item.apartment_name || 'N/A'} - Flat {item.flat_no || 'N/A'}, Floor {item.floor_no || 'N/A'}
+                                            {item.apartment_name} - Flat {item.flat_no}, Floor {item.floor_no}
                                         </Text>
                                     </View>
 

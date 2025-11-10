@@ -269,7 +269,7 @@ export default function VisitorsDetails() {
                                     <View style={styles.infoRow}>
                                         <IconButton icon="office-building" size={16} iconColor="#888" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>
-                                            {visitor.apartment_name || 'N/A'} - Flat {visitor.flat_no || 'N/A'}, Floor {visitor.floor_no || 'N/A'}
+                                            {visitor.apartment_name} - Flat {visitor.flat_no}, Floor {visitor.floor_no}
                                         </Text>
                                     </View>
                                 </View>

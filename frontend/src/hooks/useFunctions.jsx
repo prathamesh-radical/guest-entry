@@ -384,7 +384,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`${Config.BACKEND_URL}/api/addVisitor?user_id=${Number(id)}`, {
+            const response = await fetch(`http://192.168.1.30:3000/api/addVisitor?user_id=${Number(id)}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

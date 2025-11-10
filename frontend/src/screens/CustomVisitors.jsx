@@ -306,7 +306,7 @@ export default function CustomVisitors() {
                                             <View style={styles.infoRow}>
                                                 <IconButton icon="car" size={16} iconColor="#14b8a6" style={styles.infoIcon} />
                                                 <Text style={styles.infoText}>
-                                                    {item.vehicle_type} - {item.vehicle_no}
+                                                    {item.vehicle_type} {item.vehicle_no && `- ${item.vehicle_no}`}
                                                 </Text>
                                             </View>
                                         )}

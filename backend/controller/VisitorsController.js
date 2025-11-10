@@ -97,8 +97,8 @@ export const AddFlat = async (req, res) => {
 export const AddVisitor = async (req, res) => {
     const { first_name, last_name, phone_no, address, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet } = req.body;
 
-    if (!req?.query?.user_id || !first_name || !last_name || !apartment_name || !floor_no || !flat_no || !person_to_meet || (
-        (vehicle_type === "bike" || vehicle_type === "car") && !vehicle_no)
+    if (!req?.query?.user_id || !first_name || !last_name || !apartment_name || !floor_no || !flat_no || !person_to_meet || !vehicle_no ||
+        (vehicle_type === "bike" || vehicle_type === "car") && !vehicle_no
     ) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
@@ -134,7 +134,6 @@ export const UpdateFlat = async (req, res) => {
     try {
         db.query("SELECT * FROM flat WHERE id = ? AND user_id = ?", [id, user_id], (err, existingFlat) => {
             if (err) {
-                console.log("Error checking flat:", err);
                 return res.status(500).json({ message: "Error checking flat", success: false });
             }
 
@@ -150,7 +149,6 @@ export const UpdateFlat = async (req, res) => {
                 [apartment_name, floor_no, flat_no, user_id, id],
                 (err, duplicateFlat) => {
                     if (err) {
-                        console.log("Error checking duplicate flat:", err);
                         return res.status(500).json({ message: "Error checking duplicate flat", success: false });
                     }
 
@@ -166,7 +164,6 @@ export const UpdateFlat = async (req, res) => {
                         [first_name, last_name, phone_no, apartment_name, floor_no, flat_no, id, user_id],
                         (err, result) => {
                             if (err) {
-                                console.log("Error updating flat:", err);
                                 if (err.code === 'ETIMEDOUT') {
                                     return res.status(503).json({ message: "Database connection timeout. Please try again.", success: false });
                                 }
@@ -184,7 +181,6 @@ export const UpdateFlat = async (req, res) => {
             );
         });
     } catch (error) {
-        console.log("Internal Server Error:", error);
         return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 };
@@ -308,7 +304,6 @@ export const UpdateUserData = async (req, res) => {
     try {
         db.query("SELECT * FROM registration WHERE id = ?", [user_id], (err, currentResults) => {
             if (err) {
-                console.error("Error fetching current user:", err);
                 return res.status(500).json({ message: "Error fetching current user data", success: false });
             }
 
@@ -337,7 +332,6 @@ export const UpdateUserData = async (req, res) => {
 
                         db.query(updateQuery, updateValues, (err, result) => {
                             if (err) {
-                                console.error("Error updating user data:", err);
                                 return res.status(500).json({ message: "Error while updating user data", success: false });
                             }
 
@@ -355,7 +349,6 @@ export const UpdateUserData = async (req, res) => {
                             [email, user_id],
                             (err, emailResults) => {
                                 if (err) {
-                                    console.error("Error checking existing email:", err);
                                     return res.status(500).json({ message: "Error checking existing email", success: false });
                                 }
 
@@ -369,7 +362,6 @@ export const UpdateUserData = async (req, res) => {
                                         [phone_no, user_id],
                                         (err, phoneResults) => {
                                             if (err) {
-                                                console.error("Error checking existing phone:", err);
                                                 return res.status(500).json({ message: "Error checking existing phone number", success: false });
                                             }
 
@@ -391,7 +383,6 @@ export const UpdateUserData = async (req, res) => {
                             [phone_no, user_id],
                             (err, phoneResults) => {
                                 if (err) {
-                                    console.error("Error checking existing phone:", err);
                                     return res.status(500).json({ message: "Error checking existing phone number", success: false });
                                 }
 
@@ -413,7 +404,6 @@ export const UpdateUserData = async (req, res) => {
                         [first_name, last_name, user_id],
                         (err, nameResults) => {
                             if (err) {
-                                console.error("Error checking existing name:", err);
                                 return res.status(500).json({ message: "Error checking existing name", success: false });
                             }
 
