@@ -15,6 +15,9 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 10,
         width: isPortrait ? '90%' : '80%',
+        left: isPortrait ? "88%" : "10%",
+        top: !isPortrait && "-53%",
+        height: !isPortrait && "100%",
     },
     sortButton: {
         borderRadius: 10,

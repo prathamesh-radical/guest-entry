@@ -117,7 +117,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     flatNumber: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: 'bold',
     },
     floorNumberContainer: {
         paddingHorizontal: 10,
@@ -128,13 +128,13 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         borderRadius: 8,
     },
     floorNumber: {
-        color: '#888',
+        color: '#fff',
         fontSize: 13,
         marginTop: 2,
     },
     locationButton: {
         position: "absolute",
-        top: "10%",
+        top: "20%",
         right: 0,
         padding: 8,
     },
@@ -165,6 +165,24 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     dateText: {
         color: '#888',
         fontSize: 12,
+    },
+    iconButtonContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        position: 'absolute',
+        bottom: 5,
+        right: 0,
+    },
+    iconButton: {
+        position: 'absolute',
+        top: -10,
+        right: -10,
+        padding: 8,
+        backgroundColor: '#1E1E1E',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#2A2A2A',
     },
 
     // Empty State

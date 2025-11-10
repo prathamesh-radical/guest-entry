@@ -112,6 +112,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     },
     buttonContainer: {
         borderRadius: 10,
+        marginBottom: 25,
     },
     submitButton: {
         backgroundColor: 'transparent',

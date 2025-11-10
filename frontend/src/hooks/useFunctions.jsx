@@ -8,7 +8,7 @@ import { Image, StyleSheet, View } from 'react-native';
 
 export default function useFunctions() {
     const {
-        setWrapperProps, showToast, registerFormData, handleSetNull, setLoading, loginFormData, toggleModal, triggerDataRefresh, apartment, handleLogout, flatFormData, visitorFormData, userDataToUpdate, userPasswordUpdate,
+        setWrapperProps, showToast, registerFormData, handleSetNull, setLoading, loginFormData, toggleModal, triggerDataRefresh, addApartment, updateApartment, handleLogout, flatFormData, visitorFormData, userDataToUpdate, userPasswordUpdate, updateFlatFormData, updateVisitorFormData
     } = useContext(MyContext);
     const navigation = useNavigation();
 
@@ -104,20 +104,20 @@ export default function useFunctions() {
         }
     }
 
-    async function handleAddApartment(event) {
+    async function handleAddApartment(event, setShowForm) {
         event.preventDefault();
         setLoading(true);
 
         try {
             const token = await AsyncStorage.getItem("token");
             const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`${Config.BACKEND_URL}/api/addApartment?user_id=${Number(id)}`, {
+            const response = await fetch(`http://192.168.1.30:3000/api/addApartment?user_id=${Number(id)}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ apartment_name: apartment }),
+                body: JSON.stringify({ apartment_name: addApartment }),
             });
 
             const data = await response.json();
@@ -137,6 +137,7 @@ export default function useFunctions() {
                 toggleModal("apartment", false);
                 handleSetNull();
                 triggerDataRefresh();
+                setShowForm(false);
             }
         } catch (error) {
             showToast({
@@ -149,20 +150,20 @@ export default function useFunctions() {
         }
     }
 
-    async function handleAddFlat(event) {
+    async function handleUpdateApartment(event, id, onClose) {
         event.preventDefault();
         setLoading(true);
 
         try {
             const token = await AsyncStorage.getItem("token");
-            const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`${Config.BACKEND_URL}/api/addFlat?user_id=${Number(id)}`, {
-                method: "POST",
+            const userId = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/updateApartment?user_id=${Number(userId)}`, {
+                method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(flatFormData),
+                body: JSON.stringify({ apartment_name: updateApartment, id: Number(id) }),
             });
 
             const data = await response.json();
@@ -179,9 +180,191 @@ export default function useFunctions() {
                     title: "Good!",
                     message: data.message,
                 });
-                toggleModal("flat", false);
                 handleSetNull();
                 triggerDataRefresh();
+                onClose();
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                title: "Oops!",
+                message: error.message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleDeleteApartment(event, id, setShowAlert) {
+        event.preventDefault();
+        setLoading(true);
+
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userId = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/deleteApartment?user_id=${Number(userId)}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ id: Number(id) }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showToast({
+                    type: 'error',
+                    title: "Oops!",
+                    message: data.message,
+                });
+            } else {
+                showToast({
+                    type: 'success',
+                    title: "Good!",
+                    message: data.message,
+                });
+                handleSetNull();
+                triggerDataRefresh();
+                setShowAlert(false);
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                title: "Oops!",
+                message: error.message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleAddFlat(event, setShowForm) {
+        event.preventDefault();
+        setLoading(true);
+
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const id = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/addFlat?user_id=${Number(id)}`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(flatFormData),
+            });
+            
+            const data = await response.json();
+
+            if (!response.ok) {
+                showToast({
+                    type: 'error',
+                    title: "Oops!",
+                    message: data.message,
+                });
+            } else {
+                showToast({
+                    type: 'success',
+                    title: "Good!",
+                    message: data.message,
+                });
+                handleSetNull();
+                triggerDataRefresh();
+                setShowForm(false);
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                title: "Oops!",
+                message: error.message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleUpdateFlat(event, id, onClose) {
+        event.preventDefault();
+        setLoading(true);
+        console.log("id", id);
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userId = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/updateFlat?user_id=${Number(userId)}`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ ...updateFlatFormData, id: Number(id) })
+            });
+            
+            const data = await response.json();
+
+            if (!response.ok) {
+                showToast({
+                    type: 'error',
+                    title: "Oops!",
+                    message: data.message,
+                });
+                console.log("not ok", data);
+            } else {
+                showToast({
+                    type: 'success',
+                    title: "Good!",
+                    message: data.message,
+                });
+                handleSetNull();
+                triggerDataRefresh();
+                onClose();
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                title: "Oops!",
+                message: error.message,
+            });
+            console.log("error", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleDeleteFlat(event, id, setShowAlert) {
+        event.preventDefault();
+        setLoading(true);
+
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userId = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/deleteFlat?user_id=${Number(userId)}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ id: Number(id) }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showToast({
+                    type: 'error',
+                    title: "Oops!",
+                    message: data.message,
+                });
+            } else {
+                showToast({
+                    type: 'success',
+                    title: "Good!",
+                    message: data.message,
+                });
+                handleSetNull();
+                triggerDataRefresh();
+                setShowAlert(false);
             }
         } catch (error) {
             showToast({
@@ -224,9 +407,100 @@ export default function useFunctions() {
                     title: "Good!",
                     message: data.message,
                 });
-                toggleModal("flat", false);
                 handleSetNull();
                 triggerDataRefresh();
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                title: "Oops!",
+                message: error.message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleUpdateVisitor(event, id) {
+        event.preventDefault();
+        setLoading(true);
+        console.log("Updating visitor with id:", id);
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userId = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/updateVisitor?user_id=${Number(userId)}`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ ...updateVisitorFormData, id: Number(id) }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showToast({
+                    type: 'error',
+                    title: "Oops!",
+                    message: data.message,
+                });
+                console.log("not ok", data);
+            } else {
+                showToast({
+                    type: 'success',
+                    title: "Good!",
+                    message: data.message,
+                });
+                handleSetNull();
+                triggerDataRefresh();
+                navigation.navigate("Visitor Log");
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                title: "Oops!",
+                message: error.message,
+            });
+            console.log("error", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleDeleteVisitor(event, id, setShowAlert) {
+        event.preventDefault();
+        setLoading(true);
+
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userId = await AsyncStorage.getItem("id");
+            const response = await fetch(`http://192.168.1.30:3000/api/deleteVisitor?user_id=${Number(userId)}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ id: Number(id) }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showToast({
+                    type: 'error',
+                    title: "Oops!",
+                    message: data.message,
+                });
+            } else {
+                showToast({
+                    type: 'success',
+                    title: "Good!",
+                    message: data.message,
+                });
+                handleSetNull();
+                triggerDataRefresh();
+                setShowAlert(false);
             }
         } catch (error) {
             showToast({
@@ -365,6 +639,10 @@ export default function useFunctions() {
                 <View style={[styles.iconContainer, { backgroundColor: "#7BBE89" }]}>
                     <Image source={require("../../assets/icons/star.png")} style={{ width: 25, height: 25 }} tintColor="#fff" />
                 </View>
+            ) : route.name === "Update Entry" ? (
+                <View style={[styles.iconContainer, { backgroundColor: "#9F64FD" }]}>
+                    <Image source={require("../../assets/icons/star.png")} style={{ width: 25, height: 25 }} tintColor="#fff" />
+                </View>
             ) : (route.name === "Visitor Log" || route.name === "Visitor Details" || route.name === "CustomVisitors") ? (
                 <View style={[styles.iconContainer, { backgroundColor: "#6CCCF4" }]}>
                     <Icon source="account-outline" size={25} color="#fff" />
@@ -392,7 +670,7 @@ export default function useFunctions() {
     }
 
     return {
-        Wrapper, handleUserRegister, handleLogin, handleAddApartment, handleAddFlat, handleAddVisitor, handleUpdateUserData, handleUpdateUserPassword, handleLogoutAction
+        Wrapper, handleUserRegister, handleLogin, handleAddApartment, handleDeleteApartment, handleUpdateApartment, handleAddFlat, handleUpdateFlat, handleDeleteFlat, handleAddVisitor, handleUpdateVisitor, handleDeleteVisitor, handleUpdateUserData, handleUpdateUserPassword, handleLogoutAction
     };
 }
 

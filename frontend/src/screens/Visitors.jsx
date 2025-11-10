@@ -4,11 +4,12 @@ import { RefreshControl, ScrollView, View, TouchableOpacity, Dimensions } from '
 import useFunctions from '../hooks/useFunctions';
 import { IconButton, Searchbar, Text, Icon } from 'react-native-paper';
 import { MyContext } from '../context/ContextProvider';
-import CalendarModal from '../ui/menu/CalendarModal';
+import CalendarModal from '../ui/modal/CalendarModal';
 import VisitorSortMenu from '../ui/menu/VisitorSortMenu';
 import { Styles } from '../styles/visitors';
 import { formatDate, formatDateTime } from '../utils/formatData';
 import LinearGradient from 'react-native-linear-gradient';
+import AlertModal from '../ui/modal/AlertModal';
 
 export default function Visitors() {
     const { visitorData: data, refreshing, onRefresh, orientation, selected, setSelected, setGradientColor } = useContext(MyContext);
@@ -27,7 +28,9 @@ export default function Visitors() {
         date: 'ascending',
     });
     const [searchQuery, setSearchQuery] = useState('');
-    const { Wrapper } = useFunctions();
+    const [showAlert, setShowAlert] = useState(false);
+    const [selectedVisitor, setSelectedVisitor] = useState(null);
+    const { Wrapper, handleDeleteVisitor } = useFunctions();
     const route = useRoute();
     const navigation = useNavigation();
     const { height, width } = Dimensions.get('window');
@@ -154,6 +157,15 @@ export default function Visitors() {
     } else if (selected && filteredData.length === 0) {
         message = 'No visitor found for the selected date.';
     }
+
+    const handleConfirmDelete = (event) => {
+        try {
+            handleDeleteVisitor(event, selectedVisitor?.id, setShowAlert);
+            setSelectedVisitor(null);
+        } catch (error) {
+            console.error('Error deleting visitor:', error);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -302,11 +314,37 @@ export default function Visitors() {
                                             {item.apartment_name || 'N/A'} - Flat {item.flat_no || 'N/A'}, Floor {item.floor_no || 'N/A'}
                                         </Text>
                                     </View>
+
+                                    <View style={styles.iconButtonContainer}>
+                                        <IconButton
+                                            icon="square-edit-outline"
+                                            size={20}
+                                            iconColor="#1E90FF"
+                                            onPress={() => navigation.navigate('Update Entry', { item })}
+                                        />
+                                        <IconButton
+                                            icon="delete"
+                                            size={20}
+                                            iconColor="#FF0000"
+                                            onPress={() => {
+                                                setSelectedVisitor(item);
+                                                setShowAlert(true);
+                                            }}
+                                        />
+                                    </View>
                                 </View>
                             </TouchableOpacity>
                         ))}
                     </View>
                 )}
+                <AlertModal
+                    visible={showAlert}
+                    onConfirm={(event) => handleConfirmDelete(event)}
+                    onCancel={() => {
+                        setShowAlert(false);
+                        setSelectedVisitor(null);
+                    }}
+                />
             </ScrollView>
         </View>
     );

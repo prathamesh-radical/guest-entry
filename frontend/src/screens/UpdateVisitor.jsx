@@ -4,17 +4,17 @@ import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/nativ
 import useFunctions from '../hooks/useFunctions';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { MyContext } from '../context/ContextProvider';
-import { ActivityIndicator, Button, Icon, IconButton } from 'react-native-paper';
+import { Button, Icon, IconButton } from 'react-native-paper';
 import { Styles } from '../styles/AddVisitors';
 import LinearGradient from 'react-native-linear-gradient';
 import LoadingScreen from './LoadingScreen';
 import { AnimatedScreen } from '../components/AnimatedScreen';
 
-export default function AddVisitors() {
+export default function UpdateVisitor() {
     const {
-        visitorFormData: formData, apartmentData, flatData, handleChange, dropdownValues, setDropdownValues, loading, refreshing, onRefresh, setVisitorFormData, orientation, setGradientColor
+        updateVisitorFormData: formData, apartmentData, flatData, handleChange, dropdownValues, setDropdownValues, loading, refreshing, onRefresh, setUpdateVisitorFormData, orientation, setGradientColor
     } = useContext(MyContext);
-    const { Wrapper, handleAddVisitor } = useFunctions();
+    const { Wrapper, handleUpdateVisitor } = useFunctions();
     const route = useRoute();
     const [open, setOpen] = useState({ vehicle_type: false, apartment: false, floor: false, flat: false });
     const [items, setItems] = useState({
@@ -30,18 +30,24 @@ export default function AddVisitors() {
         floor: [],
         flat: [],
     });
+    const navigation = useNavigation();
     const { height, width } = Dimensions.get('window');
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
-    const navigation = useNavigation();
+    const selectedData = route.params.item;
 
+    // Derive person to meet using the selected visitor's apartment/floor/flat
     const filterPerson = flatData.find((item) => (
-        item.apartment_name === dropdownValues.apartment && item.floor_no === dropdownValues.floor && item.flat_no === dropdownValues.flat
+        item.apartment_name === (selectedData?.apartment_name || dropdownValues.apartment) && item.floor_no === (selectedData?.floor_no || dropdownValues.floor) && item.flat_no === (selectedData?.flat_no || dropdownValues.flat)
     ));
     const personName = filterPerson ? `${filterPerson.first_name} ${filterPerson.last_name}` : '';
 
     useEffect(() => {
-        const floorList = flatData.filter((item) => item.apartment_name === dropdownValues.apartment).reduce((unique, item) => {
+        // Build floor list from flats for the selected apartment
+        const apartmentToUse = selectedData?.apartment_name || dropdownValues.apartment;
+        const floorToUse = selectedData?.floor_no || dropdownValues.floor;
+
+        const floorList = flatData.filter((item) => item.apartment_name === apartmentToUse).reduce((unique, item) => {
             return unique.some((floor) => floor.value === item.floor_no) ? unique : [
                 ...unique, {
                     label: item.floor_no,
@@ -53,7 +59,7 @@ export default function AddVisitors() {
         }, []);
 
         const flatList = flatData
-            .filter((item) => item.apartment_name === dropdownValues.apartment && item.floor_no === dropdownValues.floor)
+            .filter((item) => item.apartment_name === apartmentToUse && item.floor_no === floorToUse)
             .map((item) => ({
                 label: item.flat_no,
                 value: item.flat_no,
@@ -66,19 +72,75 @@ export default function AddVisitors() {
             floor: floorList,
             flat: flatList,
         }));
-        setVisitorFormData((prev) => ({
+    }, [selectedData, flatData, dropdownValues.apartment, dropdownValues.floor]);
+
+    // Initial population effect - runs once when selectedData loads
+    useEffect(() => {
+        if (selectedData) {
+            setDropdownValues((prev) => ({
+                ...prev,
+                vehicle_type: selectedData.vehicle_type || prev.vehicle_type,
+                apartment: selectedData.apartment_name || prev.apartment,
+                floor: selectedData.floor_no || prev.floor,
+                flat: selectedData.flat_no || prev.flat,
+            }));
+
+            setUpdateVisitorFormData((prev) => ({
+                ...prev,
+                first_name: selectedData?.first_name || prev.first_name,
+                last_name: selectedData?.last_name || prev.last_name,
+                phone_no: selectedData?.phone_no || prev.phone_no,
+                address: selectedData?.address || prev.address,
+                vehicle_type: selectedData?.vehicle_type || prev.vehicle_type,
+                vehicle_no: selectedData?.vehicle_no || prev.vehicle_no,
+                apartment_name: selectedData?.apartment_name || prev.apartment_name,
+                floor_no: selectedData?.floor_no || prev.floor_no,
+                flat_no: selectedData?.flat_no || prev.flat_no,
+                person_to_meet: personName || prev.person_to_meet,
+            }));
+        }
+    }, [selectedData]);
+
+    useEffect(() => {
+        const selectedApartment = dropdownValues.apartment;
+        const selectedFloor = dropdownValues.floor;
+
+        const floorList = flatData
+            .filter((item) => item.apartment_name === selectedApartment)
+            .reduce((unique, item) => {
+                return unique.some((floor) => floor.value === item.floor_no)
+                    ? unique
+                    : [
+                        ...unique,
+                        {
+                            label: item.floor_no,
+                            value: item.floor_no,
+                            key: `${item.apartment_name}-${item.floor_no}`,
+                            icon: () => <Icon source="floor-plan" size={24} color="#fff" />
+                        },
+                    ];
+            }, []);
+
+        const flatList = flatData
+            .filter((item) => item.apartment_name === selectedApartment && item.floor_no === selectedFloor)
+            .map((item) => ({
+                label: item.flat_no,
+                value: item.flat_no,
+                key: `${item.apartment_name}-${item.floor_no}-${item.flat_no}`,
+                icon: () => <Icon source="home-outline" size={24} color="#fff" />,
+            }));
+
+        setItems((prev) => ({
             ...prev,
-            apartment_name: dropdownValues.apartment,
-            floor_no: dropdownValues.floor,
-            flat_no: dropdownValues.flat,
-            person_to_meet: personName,
+            floor: floorList,
+            flat: flatList,
         }));
-    }, [dropdownValues.apartment, dropdownValues.floor, flatData, personName]);
+    }, [dropdownValues.apartment, dropdownValues.floor, flatData]);
 
     useFocusEffect(
         useCallback(() => {
             Wrapper(route);
-            setGradientColor(['#59AC5E', '#3BADA0']);
+            setGradientColor(['#635DFF', '#9715FA']);
             return;
         }, [])
     );
@@ -91,8 +153,8 @@ export default function AddVisitors() {
             <View style={styles.headerContainer}>
                 <IconButton icon="arrow-left" size={24} color="#fff" onPress={() => navigation.goBack()} iconColor="#fff" />
                 <View style={styles.headerContent}>
-                    <Text style={styles.headerTitle}>New Visitor Entry</Text>
-                    <Text style={styles.headerSubtitle}>Register a new visitor securely</Text>
+                    <Text style={styles.headerTitle}>Update Visitor Entry</Text>
+                    <Text style={styles.headerSubtitle}>Update visitor information securely</Text>
                 </View>
             </View>
             <ScrollView
@@ -169,7 +231,7 @@ export default function AddVisitors() {
                                     setOpen={() => setOpen((prev) => ({ ...prev, vehicle_type: !prev.vehicle_type }))}
                                     setValue={(callback) => setDropdownValues((prev) => ({ ...prev, vehicle_type: callback(prev.vehicle_type) }))}
                                     setItems={(newItems) => setItems((prev) => ({ ...prev, vehicle_type: newItems }))}
-                                    placeholder="Select vehicle type"
+                                    placeholder="Select type"
                                     placeholderStyle={{ color: "#888" }}
                                     zIndex={4000}
                                     zIndexInverse={1000}
@@ -288,13 +350,13 @@ export default function AddVisitors() {
                             value={formData.person_to_meet}
                             keyboardType="default"
                             onChangeText={(text) => handleChange("person_to_meet")(text)}
-                            editable={false}
+                            editable={true}
                         />
                     </View>
 
                     {/* Submit Button */}
                     <LinearGradient
-                        colors={['#43A049', '#27A697']}
+                        colors={['#635DFF', '#9715FA']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.buttonContainer}
@@ -303,10 +365,10 @@ export default function AddVisitors() {
                             mode="contained"
                             style={styles.submitButton}
                             labelStyle={styles.submitButtonLabel}
-                            onPress={(event) => handleAddVisitor(event)}
-                            icon={() => <Icon source="floppy" size={20} color="#fff" />}
+                            onPress={() => handleUpdateVisitor({ preventDefault: () => { } }, selectedData.id)}
+                            icon={() => <Icon source="square-edit-outline" size={20} color="#fff" />}
                         >
-                            Register Visitor Entry
+                            Update Visitor Entry
                         </Button>
                     </LinearGradient>
                 </AnimatedScreen>

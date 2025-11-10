@@ -1,20 +1,25 @@
-import React, { useCallback, useContext, useState, useRef } from 'react';
-import { Dimensions, RefreshControl, ScrollView, View, TouchableOpacity, TextInput } from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { Dimensions, RefreshControl, ScrollView, View, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useRoute, useNavigation } from '@react-navigation/native';
-import { IconButton, Searchbar, Text, Button } from 'react-native-paper';
+import { IconButton, Searchbar, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Styles } from '../styles/Apartment';
 import useFunctions from '../hooks/useFunctions';
 import { MyContext } from '../context/ContextProvider';
-import AddApartmentModal from '../ui/menu/AddApartmentModal';
+import AddApartmentModal from '../ui/modal/AddApartmentModal';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { AnimatedScreen } from '../components/AnimatedScreen';
+import AlertModal from '../ui/modal/AlertModal';
+import EditApartmentModal from '../ui/modal/EditApartmentModal';
 
 export default function Apartment() {
-    const { apartmentData: data, refreshing, onRefresh, orientation, setGradientColor } = useContext(MyContext);
+    const { apartmentData, flatData, refreshing, onRefresh, orientation, setGradientColor } = useContext(MyContext);
+    const { Wrapper, handleDeleteApartment } = useFunctions();
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
-    const modalRef = useRef(null);
+    const [showAlert, setShowAlert] = useState(false);
+    const [selectedApartment, setSelectedApartment] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
@@ -26,7 +31,6 @@ export default function Apartment() {
         sno: 'descending',
         name: 'ascending',
     });
-    const { Wrapper } = useFunctions();
     const route = useRoute();
     const navigation = useNavigation();
     const { height, width } = Dimensions.get('window');
@@ -41,7 +45,20 @@ export default function Apartment() {
         }, [])
     );
 
-    const filteredData = data.filter((item) =>
+    const filteredApartment = apartmentData.map((apt) => {
+        const apartmentFlats = flatData.filter(
+            (flat) => flat.apartment_name === apt.apartment_name
+        );
+
+        const uniqueFloors = [...new Set(apartmentFlats.map(flat => flat.floor_no))];
+
+        return {
+            ...apt,
+            floors: uniqueFloors.length
+        };
+    });
+
+    const filteredData = filteredApartment.filter((item) =>
         item.apartment_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -73,15 +90,14 @@ export default function Apartment() {
         }
     };
 
-    const handleAddApartment = () => {
-        if (!showForm) {
-            setShowForm(true);
-        } else if (modalRef.current && typeof modalRef.current.close === 'function') {
-            modalRef.current.close();
-        } else {
-            setShowForm(false);
+    const handleConfirmDelete = (event) => {
+        try {
+            handleDeleteApartment(event, selectedApartment?.id, setShowAlert);
+            setSelectedApartment(null);
+        } catch (error) {
+            console.error('Error deleting apartment:', error);
         }
-    }
+    };
 
     return (
         <View style={styles.container}>
@@ -96,14 +112,15 @@ export default function Apartment() {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#6600ff']} />}
             >
                 <AnimatedScreen>
-                    <TouchableOpacity  style={styles.addButton} onPress={() => handleAddApartment()}>
+                    <TouchableOpacity style={styles.addButton} onPress={() => setShowForm(!showForm)}>
                         <Icon name="plus" size={20} color="#fff" />
                         <Text style={styles.addButtonText}>Add New Apartment</Text>
                     </TouchableOpacity>
 
                     {showForm && (
-                        <AddApartmentModal ref={modalRef} setShowForm={setShowForm} />
+                        <AddApartmentModal setShowForm={setShowForm} />
                     )}
+
                     <View style={styles.searchBarContainer}>
                         <Searchbar
                             placeholder="Search apartments..."
@@ -144,6 +161,7 @@ export default function Apartment() {
                             zIndexInverse={1000}
                         />
                     </View>
+
                     {sortedData.length === 0 ? (
                         <View style={styles.nodatacontainer}>
                             <Text style={styles.noDataText}>
@@ -155,15 +173,40 @@ export default function Apartment() {
                             {sortedData.map((item, index) => (
                                 <View key={item.id} style={styles.gridItem}>
                                     <View style={styles.card}>
-                                        <View style={styles.cardHeader}>
-                                            <View style={styles.numberBadge}>
-                                                <Text style={styles.badgeText}>#{index + 1}</Text>
-                                            </View>
+                                        <View style={styles.cardContent}>
                                             <View style={styles.cardTitleContainer}>
+                                                <View style={styles.numberBadge}>
+                                                    <Text style={styles.badgeText}>#{index + 1}</Text>
+                                                </View>
                                                 <Text style={styles.cardTitle}>{item.apartment_name}</Text>
-                                                <Text style={styles.cardDate}>
-                                                    Added: {item.date ? new Date(item.date).toLocaleDateString('en-GB') : null}
-                                                </Text>
+                                            </View>
+                                            <View style={styles.cardDetails}>
+                                                <View style={styles.cardContent}>
+                                                    <Text style={styles.cardDate}>{item.floors} Floors</Text>
+                                                    <Text style={styles.cardDate}>
+                                                        Added: {item.date ? new Date(item.date).toLocaleDateString('en-GB') : null}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.iconButtonContainer}>
+                                                    <IconButton 
+                                                        icon="square-edit-outline" 
+                                                        size={20} 
+                                                        iconColor="#1E90FF"
+                                                        onPress={() => {
+                                                            setSelectedApartment(item);
+                                                            setShowEditModal(true);
+                                                        }}
+                                                    />
+                                                    <IconButton
+                                                        icon="delete"
+                                                        size={20}
+                                                        iconColor="#FF0000"
+                                                        onPress={() => {
+                                                            setSelectedApartment(item);
+                                                            setShowAlert(true);
+                                                        }}
+                                                    />
+                                                </View>
                                             </View>
                                             <View style={styles.iconButton}>
                                                 <Icon name="office-building" size={28} color="#1E90FF" />
@@ -174,6 +217,22 @@ export default function Apartment() {
                             ))}
                         </View>
                     )}
+                    <AlertModal
+                        visible={showAlert}
+                        onConfirm={(event) => handleConfirmDelete(event)}
+                        onCancel={() => {
+                            setShowAlert(false);
+                            setSelectedApartment(null);
+                        }}
+                    />
+                    <EditApartmentModal 
+                        visible={showEditModal}
+                        onClose={() => {
+                            setShowEditModal(false);
+                            setSelectedApartment(null);
+                        }}
+                        selectedApartment={selectedApartment}
+                    />
                 </AnimatedScreen>
             </ScrollView>
         </View>

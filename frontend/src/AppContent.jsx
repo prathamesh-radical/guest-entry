@@ -10,7 +10,7 @@ import LoadingScreen from './screens/LoadingScreen';
 
 export default function AppContent() {
     const { isTokenChecked, wrapperProps, toastConfig } = useContext(MyContext);
-
+    
     if (!isTokenChecked) {
         return <LoadingScreen />;
     }

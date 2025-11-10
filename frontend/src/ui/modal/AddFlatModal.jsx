@@ -1,14 +1,13 @@
-import React, { useContext, useState, forwardRef } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, Dimensions } from 'react-native';
-import { Button } from 'react-native-paper';
+import { ActivityIndicator, Button } from 'react-native-paper';
 import { MyContext } from '../../context/ContextProvider';
 import useFunctions from '../../hooks/useFunctions';
 import { Styles } from '../../styles/AddFlatModal';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { AnimatedModal } from '../../components/AnimatedModal';
 
-const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
-    const { flatFormData: formData, apartmentData: data, loading, handleChange, value, setValue, orientation } = useContext(MyContext);
+export default function AddFlatModal({ setShowForm }) {
+    const { flatFormData: formData, apartmentData: data, loading, handleChange, orientation, setFlatFormData } = useContext(MyContext);
     const { handleAddFlat } = useFunctions();
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState(
@@ -18,12 +17,15 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
 
-    if (loading) return <LoadingScreen />;
+    const handleApartmentChange = (value) => {
+        setFlatFormData(prev => ({
+            ...prev,
+            apartment_name: value
+        }));
+    };
 
-    const onCloseComplete = () => setShowForm(false);
-
-    const Content = ({ onClose }) => (
-        <>
+    return (
+        <View style={styles.container}>
             <Text style={styles.modalTitle}>Add New Flat</Text>
             <View style={styles.nameContainer}>
                 <View style={styles.nameFieldContainer}>
@@ -32,7 +34,7 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
                         style={styles.inputField}
                         placeholder="Enter first name"
                         placeholderTextColor="#aaa"
-                        value={formData.first_name}
+                        value={formData.first_name || ''}
                         keyboardType="default"
                         onChangeText={(text) => handleChange("first_name")(text)}
                     />
@@ -43,7 +45,7 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
                         style={styles.inputField}
                         placeholder="Enter last name"
                         placeholderTextColor="#aaa"
-                        value={formData.last_name}
+                        value={formData.last_name || ''}
                         keyboardType="default"
                         onChangeText={(text) => handleChange("last_name")(text)}
                     />
@@ -55,19 +57,22 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
                     style={styles.inputField}
                     placeholder="Enter phone number"
                     placeholderTextColor="#aaa"
-                    value={formData.phone_no}
+                    value={formData.phone_no || ''}
                     keyboardType="number-pad"
                     onChangeText={(text) => handleChange("phone_no")(text)}
                 />
             </View>
             <View style={styles.nameFieldContainer}>
-                <Text style={styles.label}>First Name *</Text>
+                <Text style={styles.label}>Apartment Name *</Text>
                 <DropDownPicker
                     open={open}
-                    value={value}
+                    value={formData.apartment_name}
                     items={items}
                     setOpen={setOpen}
-                    setValue={setValue}
+                    setValue={(callback) => {
+                        const value = typeof callback === 'function' ? callback(formData.apartment_name) : callback;
+                        handleApartmentChange(value);
+                    }}
                     setItems={setItems}
                     placeholder="Select Apartment"
                     placeholderStyle={{ color: "#aaa" }}
@@ -80,8 +85,8 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
                     arrowIconStyle={{ tintColor: '#aaa' }}
                     listItemLabelStyle={{ fontSize: 15, color: "#fff" }}
                     listItemContainerStyle={{ height: 40 }}
-                    textStyle={{ fontSize: 15 }}
-                    onChangeValue={(text) => handleChange("apartment_name")(text)}
+                    textStyle={{ fontSize: 15, color: '#fff' }}
+                    tickIconStyle={{ tintColor: '#fff' }}
                 />
             </View>
             <View style={styles.nameContainer}>
@@ -91,7 +96,7 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
                         style={styles.inputField}
                         placeholder="1"
                         placeholderTextColor="#aaa"
-                        value={formData.floor_no}
+                        value={formData.floor_no || ''}
                         keyboardType="number-pad"
                         onChangeText={(text) => handleChange("floor_no")(text)}
                     />
@@ -102,7 +107,7 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
                         style={styles.inputField}
                         placeholder="101"
                         placeholderTextColor="#aaa"
-                        value={formData.flat_no}
+                        value={formData.flat_no || ''}
                         keyboardType="number-pad"
                         onChangeText={(text) => handleChange("flat_no")(text)}
                     />
@@ -110,30 +115,20 @@ const AddFlatModal = forwardRef(({ setShowForm }, ref) => {
             </View>
             <View style={styles.buttonContainer}>
                 <Button
-                    children="Add Flat"
+                    children={loading ? <ActivityIndicator color="#fff" size="small" /> : "Add Flat"}
                     mode="contained-tonal"
                     style={[styles.button, { backgroundColor: '#2196F3' }]}
                     labelStyle={styles.buttonLabelStyle}
-                    onPress={(event) => handleAddFlat(event)}
+                    onPress={(event) => handleAddFlat(event, setShowForm)}
                 />
                 <Button
                     children="Cancel"
                     mode="contained-tonal"
                     style={[styles.button, { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#333' }]}
                     labelStyle={styles.buttonLabelStyle}
-                    onPress={() => {
-                        if (onClose) onClose();
-                    }}
+                    onPress={() => setShowForm(false)}
                 />
             </View>
-        </>
+        </View>
     );
-
-    return (
-        <AnimatedModal ref={ref} style={styles.container} onClose={onCloseComplete}>
-            <Content />
-        </AnimatedModal>
-    );
-});
-
-export default AddFlatModal;
+}

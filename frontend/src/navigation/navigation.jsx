@@ -17,6 +17,7 @@ import CustomVisitors from "../screens/CustomVisitors";
 import Apartment from "../screens/Apartment";
 import Flats from "../screens/Flats";
 import Reports from "../screens/Reports";
+import UpdateVisitor from "../screens/UpdateVisitor";
 
 export default function Navigation() {
     const { isTokenChecked, handleLogout } = useContext(MyContext);
@@ -68,6 +69,7 @@ export default function Navigation() {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Security Hub">{() => <ProtectedRoute><Dashboard /></ProtectedRoute>}</Stack.Screen>
             <Stack.Screen name="New Entry">{() => <ProtectedRoute><AddVisitors /></ProtectedRoute>}</Stack.Screen>
+            <Stack.Screen name="Update Entry">{() => <ProtectedRoute><UpdateVisitor /></ProtectedRoute>}</Stack.Screen>
             <Stack.Screen name="Buildings">{() => <ProtectedRoute><Apartment /></ProtectedRoute>}</Stack.Screen>
             <Stack.Screen name="Residential Units">{() => <ProtectedRoute><Flats /></ProtectedRoute>}</Stack.Screen>
             <Stack.Screen name="Visitor Log">{() => <ProtectedRoute><Visitors /></ProtectedRoute>}</Stack.Screen>

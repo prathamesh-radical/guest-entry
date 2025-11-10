@@ -182,7 +182,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 12,
+        marginBottom: 5,
     },
     cardHeaderLeft: {
         flex: 1,
@@ -192,7 +192,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         gap: 10,
     },
     visitorNumber: {
-        backgroundColor: '#26A69A',
+        backgroundColor: '#2C2C2C',
         fontSize: 14,
         paddingVertical: 3,
         paddingHorizontal: 8,

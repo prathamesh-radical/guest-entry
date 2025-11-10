@@ -184,7 +184,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 12,
+        marginBottom: 5,
     },
     cardHeaderLeft: {
         flex: 1,
@@ -194,13 +194,13 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         gap: 10,
     },
     visitorNumber: {
-        backgroundColor: '#26A69A',
+        backgroundColor: '#2C2C2C',
         fontSize: 14,
         paddingVertical: 3,
         paddingHorizontal: 8,
         borderRadius: 8,
         color: '#ccc',
-        fontWeight: '600',
+        fontWeight: 'bold',
     },
     visitorName: {
         fontSize: 16,
@@ -222,9 +222,6 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         fontSize: 12,
         color: '#888',
     },
-    cardBody: {
-        gap: 8,
-    },
     infoRow: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -237,6 +234,20 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         fontSize: 13,
         color: '#ccc',
         flex: 1,
+    },
+    iconButtonContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        position: 'absolute',
+        top: -10,
+        right: -12,
+    },
+    iconButton: {
+        position: 'absolute',
+        top: -10,
+        right: -10,
+        padding: 8,
     },
     noDataContainer: {
         padding: 40,

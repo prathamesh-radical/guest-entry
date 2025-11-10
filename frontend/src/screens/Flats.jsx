@@ -1,25 +1,29 @@
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Dimensions, RefreshControl, ScrollView, View, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { Searchbar, Text, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useFunctions from '../hooks/useFunctions';
-import AddFlatModal from '../ui/menu/AddFlatModal';
+import AddFlatModal from '../ui/modal/AddFlatModal';
 import { MyContext } from '../context/ContextProvider';
 import { Styles } from '../styles/Flat';
 import FlatSortMenu from '../ui/menu/FlatSortMenu';
 import { AnimatedScreen } from '../components/AnimatedScreen';
+import AlertModal from '../ui/modal/AlertModal';
+import EditFlatModal from '../ui/modal/EditFlatModal';
 
 export default function Flat() {
     const { flatData: data, refreshing, onRefresh, orientation, setGradientColor } = useContext(MyContext);
     const [showForm, setShowForm] = useState(false);
-    const modalRef = useRef(null);
+    const [showAlert, setShowAlert] = useState(false);
+    const [selectedFlat, setSelectedFlat] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [sortColumn, setSortColumn] = useState('sno');
     const [sortDirection, setSortDirection] = useState({
         sno: 'ascending', name: 'ascending', pno: 'ascending', apartmentname: 'ascending', floorno: 'ascending', flatno: 'ascending',
     });
     const [searchQuery, setSearchQuery] = useState('');
-    const { Wrapper } = useFunctions();
+    const { Wrapper, handleDeleteFlat } = useFunctions();
     const route = useRoute();
     const navigation = useNavigation();
     const { height, width } = Dimensions.get('window');
@@ -101,15 +105,15 @@ export default function Flat() {
         return acc;
     }, {}) || {};
 
-    const handleAddFlat = () => {
-        if (!showForm) {
-            setShowForm(true);
-        } else if (modalRef.current && typeof modalRef.current.close === 'function') {
-            modalRef.current.close();
-        } else {
-            setShowForm(false);
+    const handleConfirmDelete = (event) => {
+        try {
+            handleDeleteFlat(event, selectedFlat?.id, setShowAlert);
+            setSelectedFlat(null);
+        } catch (error) {
+            console.error('Error deleting flat:', error);
         }
-    }
+    };
+
 
     return (
         <View style={styles.container}>
@@ -130,12 +134,12 @@ export default function Flat() {
                 }
             >
                 <AnimatedScreen>
-                    <TouchableOpacity style={styles.addButton} onPress={() => handleAddFlat()}>
+                    <TouchableOpacity style={styles.addButton} onPress={() => setShowForm(!showForm)}>
                         <Icon name="plus" size={20} color="#fff" />
                         <Text style={styles.addButtonText}>Add New Flat</Text>
                     </TouchableOpacity>
                     {showForm && (
-                        <AddFlatModal ref={modalRef} setShowForm={setShowForm} />
+                        <AddFlatModal setShowForm={setShowForm} />
                     )}
                     <View style={styles.searchContainer}>
                         <Searchbar
@@ -165,45 +169,81 @@ export default function Flat() {
                         <View style={styles.flatCardsContainer}>
                             {filteredData.map((item, index) => (
                                 <View key={item.id} style={[styles.flatCard, { width: isPortrait ? '100%' : '48%' }]}>
-                                {/* Card Header */}
-                                <View style={styles.cardHeader}>
-                                    <View style={styles.flatBadge}>
-                                        <Text style={styles.flatBadgeText}>#{index + 1}</Text>
-                                    </View>
-                                    <View style={styles.flatTitleContainer}>
-                                        <Text style={styles.flatNumber}>Flat {item.flat_no}</Text>
-                                        <View style={styles.floorNumberContainer}>
-                                            <Text style={styles.floorNumber}>Floor {item.floor_no}</Text>
+                                    {/* Card Header */}
+                                    <View style={styles.cardHeader}>
+                                        <View style={styles.flatBadge}>
+                                            <Text style={styles.flatBadgeText}>#{index + 1}</Text>
                                         </View>
+                                        <View style={styles.flatTitleContainer}>
+                                            <Text style={styles.flatNumber}>Flat {item.flat_no}</Text>
+                                            <View style={styles.floorNumberContainer}>
+                                                <Text style={styles.floorNumber}>Floor {item.floor_no}</Text>
+                                            </View>
+                                        </View>
+                                        <TouchableOpacity style={styles.locationButton}>
+                                            <Icon name="map-marker-outline" size={40} color="#2196F3" />
+                                        </TouchableOpacity>
                                     </View>
-                                    <TouchableOpacity style={styles.locationButton}>
-                                        <Icon name="map-marker-outline" size={50} color="#2196F3" />
-                                    </TouchableOpacity>
-                                </View>
 
-                                {/* Card Content */}
-                                <View style={styles.cardContent}>
-                                    <View style={styles.infoRow}>
-                                        <Icon name="map-marker-outline" size={16} color="#888" />
-                                        <Text style={styles.infoText}>{item.apartment_name}</Text>
+                                    {/* Card Content */}
+                                    <View style={styles.cardContent}>
+                                        <View style={styles.infoRow}>
+                                            <Icon name="map-marker-outline" size={16} color="#888" />
+                                            <Text style={styles.infoText}>{item.apartment_name}</Text>
+                                        </View>
+                                        <View style={styles.infoRow}>
+                                            <Icon name="account-outline" size={16} color="#888" />
+                                            <Text style={styles.infoText}>
+                                                {`${item.first_name || ''} ${item.last_name || ''}`.trim()}
+                                            </Text>
+                                        </View>
+                                        <View style={styles.infoRow}>
+                                            <Icon name="phone-outline" size={16} color="#888" />
+                                            <Text style={styles.infoText}>{item.phone_no}</Text>
+                                        </View>
+                                        <Text style={styles.dateText}>Added: {new Date(item.date).toLocaleDateString('en-GB') || null}</Text>
                                     </View>
-                                    <View style={styles.infoRow}>
-                                        <Icon name="account-outline" size={16} color="#888" />
-                                        <Text style={styles.infoText}>
-                                            {`${item.first_name || ''} ${item.last_name || ''}`.trim()}
-                                        </Text>
+                                    <View style={styles.iconButtonContainer}>
+                                        <IconButton
+                                            icon="square-edit-outline"
+                                            size={20}
+                                            iconColor="#1E90FF"
+                                            onPress={() => {
+                                                setSelectedFlat(item);
+                                                setShowEditModal(true);
+                                            }}
+                                        />
+                                        <IconButton
+                                            icon="delete"
+                                            size={20}
+                                            iconColor="#FF0000"
+                                            onPress={() => {
+                                                setSelectedFlat(item);
+                                                setShowAlert(true);
+                                            }}
+                                        />
                                     </View>
-                                    <View style={styles.infoRow}>
-                                        <Icon name="phone-outline" size={16} color="#888" />
-                                        <Text style={styles.infoText}>{item.phone_no}</Text>
-                                    </View>
-                                    <Text style={styles.dateText}>Added: {new Date(item.date).toLocaleDateString('en-GB') || null}</Text>
                                 </View>
-                            </View>
                             ))}
                         </View>
                     )}
-                </AnimatedScreen>  
+                    <AlertModal
+                        visible={showAlert}
+                        onConfirm={(event) => handleConfirmDelete(event)}
+                        onCancel={() => {
+                            setShowAlert(false);
+                            setSelectedFlat(null);
+                        }}
+                    />
+                    <EditFlatModal
+                        visible={showEditModal}
+                        onClose={() => {
+                            setShowEditModal(false);
+                            setSelectedFlat(null);
+                        }}
+                        selectedFlat={selectedFlat}
+                    />
+                </AnimatedScreen>
             </ScrollView>
         </View>
     );

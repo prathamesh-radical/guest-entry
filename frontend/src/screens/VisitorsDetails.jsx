@@ -5,7 +5,7 @@ import useFunctions from '../hooks/useFunctions';
 import { Icon, IconButton, Searchbar, Text } from 'react-native-paper';
 import { MyContext } from '../context/ContextProvider';
 import VisitorSortMenu from '../ui/menu/VisitorSortMenu';
-import CalendarModal from '../ui/menu/CalendarModal';
+import CalendarModal from '../ui/modal/CalendarModal';
 import { formatDate, formatDateTime, formatTime } from '../utils/formatData';
 import { Styles } from '../styles/VisitorsDetails';
 import { AnimatedScreen } from '../components/AnimatedScreen';

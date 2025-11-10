@@ -4,10 +4,10 @@ import { Dimensions, RefreshControl, ScrollView, View, TouchableOpacity } from '
 import useFunctions from '../hooks/useFunctions';
 import { IconButton, Searchbar, Text } from 'react-native-paper';
 import { MyContext } from '../context/ContextProvider';
-import CalendarModal from '../ui/menu/CalendarModal';
+import CalendarModal from '../ui/modal/CalendarModal';
 import { Styles } from '../styles/CustomVisitors';
 import VisitorSortMenu from '../ui/menu/VisitorSortMenu';
-import { formatDate } from '../utils/formatData';
+import { formatDate, formatDateTime } from '../utils/formatData';
 import LinearGradient from 'react-native-linear-gradient';
 import { AnimatedScreen } from '../components/AnimatedScreen';
 
@@ -281,14 +281,14 @@ export default function CustomVisitors() {
                                 >
                                     <View style={styles.cardHeader}>
                                         <View style={styles.cardHeaderLeft}>
-                                            <Text style={styles.visitorNumber}>#{index + 1}</Text>
+                                            <Text style={styles.visitorNumber}>
+                                                #{sortDirection.sno === 'ascending' ? filteredData.length - index : index + 1}
+                                            </Text>
                                             <Text style={styles.visitorName}>
                                                 {item.first_name} {item.last_name}
                                             </Text>
                                         </View>
-                                        <Text style={styles.dateTime}>
-                                            {formatTime(item.datetime)}
-                                        </Text>
+                                        <Text style={styles.dateTime}>{formatDateTime(item.datetime)}</Text>
                                     </View>
 
                                     <View style={styles.cardBody}>

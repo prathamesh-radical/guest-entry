@@ -165,7 +165,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 12,
+        marginBottom: 5,
     },
     cardHeaderLeft: {
         flexDirection: 'row',
@@ -174,18 +174,18 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         flex: 1,
     },
     visitorNumber: {
-        backgroundColor: '#26A69A',
+        backgroundColor: '#2C2C2C',
         fontSize: 14,
         paddingVertical: 3,
         paddingHorizontal: 8,
         borderRadius: 8,
         color: '#ccc',
-        fontWeight: '600',
+        fontWeight: 'bold',
     },
     visitorName: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: 'bold',
         flex: 1,
     },
     statusBadge: {
@@ -207,9 +207,6 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     dateTime: {
         color: '#94a3b8',
         fontSize: 12,
-    },
-    cardBody: {
-        gap: 8,
     },
     infoRow: {
         flexDirection: 'row',
