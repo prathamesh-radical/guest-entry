@@ -111,7 +111,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/addApartment?user_id=${Number(id)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/addApartment?user_id=${Number(id)}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/updateApartment?user_id=${Number(userId)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/updateApartment?user_id=${Number(userId)}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/deleteApartment?user_id=${Number(userId)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/deleteApartment?user_id=${Number(userId)}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const id = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/addFlat?user_id=${Number(id)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/addFlat?user_id=${Number(id)}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -292,7 +292,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/updateFlat?user_id=${Number(userId)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/updateFlat?user_id=${Number(userId)}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -339,7 +339,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/deleteFlat?user_id=${Number(userId)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/deleteFlat?user_id=${Number(userId)}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
@@ -428,7 +428,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/updateVisitor?user_id=${Number(userId)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/updateVisitor?user_id=${Number(userId)}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -475,7 +475,7 @@ export default function useFunctions() {
         try {
             const token = await AsyncStorage.getItem("token");
             const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`http://192.168.1.30:3000/api/deleteVisitor?user_id=${Number(userId)}`, {
+            const response = await fetch(`${Config.BACKEND_URL}/api/deleteVisitor?user_id=${Number(userId)}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
