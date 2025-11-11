@@ -6,14 +6,18 @@ import useFunctions from '../../hooks/useFunctions';
 import { Styles } from '../../styles/EditApartment';
 
 export default function EditApartmentModal({ visible, onClose, selectedApartment }) {
-    const { updateApartment, loading, handleChange, orientation, setUpdateApartment } = useContext(MyContext);
+    const { updateApartment: formData, loading, handleChange, orientation, setUpdateApartment } = useContext(MyContext);
     const { handleUpdateApartment } = useFunctions();
     const { height, width } = Dimensions.get('window');
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
 
     useEffect(() => {
-        setUpdateApartment(selectedApartment?.apartment_name);
+        setUpdateApartment((prev) => ({
+            ...prev,
+            apartment_name: selectedApartment?.apartment_name || '',
+            total_floors: selectedApartment?.total_floors?.toString() || '',
+        }));
     }, [selectedApartment]);
 
     return (
@@ -27,15 +31,24 @@ export default function EditApartmentModal({ visible, onClose, selectedApartment
             <View style={styles.blurContainer}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modal}>
-                        <Text style={styles.modalTitle}>Edit Apartment Name</Text>
+                        <Text style={styles.modalTitle}>Edit Apartment</Text>
                         <Text style={styles.label}>Apartment Name *</Text>
                         <TextInput
                             style={styles.inputField}
                             placeholder="Enter apartment name"
                             placeholderTextColor="#aaa"
-                            value={updateApartment}
+                            value={formData?.apartment_name}
                             keyboardType="default"
-                            onChangeText={(text) => handleChange("updateApartment")(text)}
+                            onChangeText={(text) => handleChange("apartment_name")(text)}
+                        />
+                        <Text style={[styles.label, { marginTop: 15 }]}>No. of Floors *</Text>
+                        <TextInput
+                            style={styles.inputField}
+                            placeholder="Enter number of floors"
+                            placeholderTextColor="#aaa"
+                            value={formData?.total_floors}
+                            keyboardType="numeric"
+                            onChangeText={(text) => handleChange("total_floors")(text)}
                         />
                         <View style={styles.buttonContainer}>
                             <Button

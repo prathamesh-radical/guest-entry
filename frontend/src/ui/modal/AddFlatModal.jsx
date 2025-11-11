@@ -13,14 +13,36 @@ export default function AddFlatModal({ setShowForm }) {
     const [items, setItems] = useState(
         data.map((item) => ({ label: item.apartment_name, value: item.apartment_name, key: item.id.toString() })),
     );
+    const [openFloor, setOpenFloor] = useState(false);
+    const [floorItems, setFloorItems] = useState([]);
     const { height, width } = Dimensions.get('window');
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
 
-    const handleApartmentChange = (value) => {
+    const handleApartmentChange = (apartValue) => {
+        if (apartValue) {
+            const selectedApartment = data.find(item => item.apartment_name === apartValue);
+            if (selectedApartment) {
+                const totalFloors = selectedApartment.total_floors;
+                const newFloorItems = Array.from(
+                    { length: totalFloors }, 
+                    (_, i) => ({ label: i + 1, value: (i + 1).toString(), key: (i + 1).toString() })
+                );
+                setFloorItems(newFloorItems);
+            }
+        }
+
         setFlatFormData(prev => ({
             ...prev,
-            apartment_name: value
+            apartment_name: apartValue,
+            floor_no: null
+        }));
+    };
+
+    const handleFloorChange = (floorValue) => {
+        setFlatFormData(prev => ({
+            ...prev,
+            floor_no: floorValue
         }));
     };
 
@@ -70,14 +92,12 @@ export default function AddFlatModal({ setShowForm }) {
                     items={items}
                     setOpen={setOpen}
                     setValue={(callback) => {
-                        const value = typeof callback === 'function' ? callback(formData.apartment_name) : callback;
-                        handleApartmentChange(value);
+                        const apartValue = typeof callback === 'function' ? callback(formData.apartment_name) : callback;
+                        handleApartmentChange(apartValue);
                     }}
                     setItems={setItems}
                     placeholder="Select Apartment"
                     placeholderStyle={{ color: "#aaa" }}
-                    zIndex={3000}
-                    zIndexInverse={1000}
                     listMode="SCROLLVIEW"
                     scrollViewProps={{ nestedScrollEnabled: true }}
                     style={styles.dropdownStyle}
@@ -92,13 +112,29 @@ export default function AddFlatModal({ setShowForm }) {
             <View style={styles.nameContainer}>
                 <View style={styles.nameFieldContainer}>
                     <Text style={styles.label}>Floor No *</Text>
-                    <TextInput
-                        style={styles.inputField}
-                        placeholder="1"
-                        placeholderTextColor="#aaa"
-                        value={formData.floor_no || ''}
-                        keyboardType="number-pad"
-                        onChangeText={(text) => handleChange("floor_no")(text)}
+                    <DropDownPicker
+                        open={openFloor}
+                        value={formData.floor_no}
+                        items={floorItems}
+                        setOpen={setOpenFloor}
+                        setValue={(callback) => {
+                            const floorValue = typeof callback === 'function' ? callback(formData.floor_no) : callback;
+                            handleFloorChange(floorValue);
+                        }}
+                        setItems={setFloorItems}
+                        placeholder="Select Floor"
+                        placeholderStyle={{ color: "#aaa" }}
+                        zIndex={3000}
+                        zIndexInverse={1000}
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{ nestedScrollEnabled: true }}
+                        style={styles.dropdownStyle}
+                        dropDownContainerStyle={styles.dropDownContainerStyle}
+                        arrowIconStyle={{ tintColor: '#aaa' }}
+                        listItemLabelStyle={{ fontSize: 15, color: "#fff" }}
+                        listItemContainerStyle={{ height: 40 }}
+                        textStyle={{ fontSize: 15, color: '#fff' }}
+                        tickIconStyle={{ tintColor: '#fff' }}
                     />
                 </View>
                 <View style={styles.nameFieldContainer}>

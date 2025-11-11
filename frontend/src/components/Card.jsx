@@ -6,7 +6,6 @@ import { Icon } from 'react-native-paper';
 
 export default function CustomCard({ route, colors, styles, cardTitle, cardText, iconBgColor, iconName, value, display, mainStyle, customStyle }) {
     const navigation = useNavigation();
-    const { width } = Dimensions.get('window');
     const isFullWidth = iconName === "map-marker-outline";
 
     return (
@@ -15,14 +14,7 @@ export default function CustomCard({ route, colors, styles, cardTitle, cardText,
                 colors={colors}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={[
-                    styles.cardContentContainer,
-                    mainStyle,
-                    {
-                        alignSelf: isFullWidth ? "center" : "flex-start",
-                        minHeight: 120,
-                    }
-                ]}
+                style={[styles.cardContentContainer, mainStyle, { alignSelf: isFullWidth ? "center" : "flex-start", minHeight: 120 }]}
             >
                 <View style={styles.contentWrap}>
                     <Text style={styles.cardTitle}>{cardTitle}</Text>

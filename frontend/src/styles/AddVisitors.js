@@ -9,7 +9,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         flexGrow: 1,
         backgroundColor: "#152019",
         paddingVertical: 10,
-        paddingHorizontal: isPortrait ? width * 0.05 : height * 0.15,
+        paddingHorizontal: isPortrait ? width * 0.03 : height * 0.15,
     },
     headerContainer: {
         flexDirection: 'row',
@@ -41,7 +41,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     sectionHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 5,
         paddingBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#404040',
@@ -57,6 +57,15 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#FFFFFF',
+    },
+    nameRow: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: 15,
+    },
+    nameContain: {
+        flex: 1,
+        flexDirection: 'column',
     },
     fieldLabel: {
         fontSize: 14,
@@ -106,13 +115,14 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     },
     vehicleTypeContainer: {
         flex: 1,
+        flexDirection: 'column',
     },
     licensePlateContainer: {
         flex: 1,
     },
     buttonContainer: {
         borderRadius: 10,
-        marginBottom: 25,
+        marginTop: 10,
     },
     submitButton: {
         backgroundColor: 'transparent',

@@ -11,6 +11,8 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
     const { handleUpdateFlat } = useFunctions();
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState([]);
+    const [openFloor, setOpenFloor] = useState(false);
+    const [floorItems, setFloorItems] = useState([]);
     const { height, width } = Dimensions.get('window');
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
@@ -38,6 +40,49 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
         }
     }, [apartmentData]);
 
+    useEffect(() => {
+        const aptName = formData.apartment_name || selectedFlat?.apartment_name;
+        if (apartmentData && aptName) {
+            const selectedApartment = apartmentData.find(item => item.apartment_name === aptName);
+            if (selectedApartment) {
+                const totalFloors = Number(selectedApartment.total_floors) || 0;
+                const newFloorItems = Array.from({ length: totalFloors }, (_, i) => ({
+                    label: (i + 1).toString(),
+                    value: (i + 1).toString()
+                }));
+                setFloorItems(newFloorItems);
+            } else {
+                setFloorItems([]);
+            }
+        } else {
+            setFloorItems([]);
+        }
+    }, [apartmentData, selectedFlat, formData.apartment_name]);
+
+    const handleApartmentChange = (apartValue) => {
+        if (apartValue) {
+            const selectedApartment = apartmentData?.find(item => item.apartment_name === apartValue);
+            if (selectedApartment) {
+                const totalFloors = Number(selectedApartment.total_floors) || 0;
+                const newFloorItems = Array.from({ length: totalFloors }, (_, i) => ({
+                    label: (i + 1).toString(),
+                    value: (i + 1).toString()
+                }));
+                setFloorItems(newFloorItems);
+            } else {
+                setFloorItems([]);
+            }
+        } else {
+            setFloorItems([]);
+        }
+
+        setUpdateFlatFormData(prev => ({
+            ...prev,
+            apartment_name: apartValue,
+            floor_no: null
+        }));
+    };
+
     return (
         <Modal
             visible={visible}
@@ -51,7 +96,7 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
                     <View style={styles.modal}>
                         <Text style={styles.modalTitle}>Edit Flat</Text>
                         <View style={styles.nameContainer}>
-                            <View style={[styles.nameFieldContainer, { width: "47%"}]}>
+                            <View style={[styles.nameFieldContainer, { width: "47%" }]}>
                                 <Text style={styles.label}>First Name *</Text>
                                 <TextInput
                                     style={styles.inputField}
@@ -62,7 +107,7 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
                                     onChangeText={(text) => handleChange("first_name")(text)}
                                 />
                             </View>
-                            <View style={[styles.nameFieldContainer, { width: "47%"}]}>
+                            <View style={[styles.nameFieldContainer, { width: "47%" }]}>
                                 <Text style={styles.label}>Last Name *</Text>
                                 <TextInput
                                     style={styles.inputField}
@@ -75,7 +120,7 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
                             </View>
                         </View>
                         <View style={styles.nameFieldContainer}>
-                            <Text style={[styles.label, { marginTop: 20}]}>Phone Number *</Text>
+                            <Text style={[styles.label, { marginTop: 20 }]}>Phone Number *</Text>
                             <TextInput
                                 style={styles.inputField}
                                 placeholder="Enter phone number"
@@ -86,7 +131,7 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
                             />
                         </View>
                         <View style={styles.nameFieldContainer}>
-                            <Text style={[styles.label, { marginTop: 20}]}>Apartment Name *</Text>
+                            <Text style={[styles.label, { marginTop: 20 }]}>Apartment Name *</Text>
                             <DropDownPicker
                                 open={open}
                                 value={formData.apartment_name}
@@ -96,13 +141,12 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
                                     const resolved = typeof callbackOrValue === 'function'
                                         ? callbackOrValue(formData.apartment_name)
                                         : callbackOrValue;
-                                    handleChange('apartment_name')(resolved);
+                                    // update apartment and recompute floor list
+                                    handleApartmentChange(resolved);
                                 }}
                                 setItems={setItems}
                                 placeholder="Select Apartment"
                                 placeholderStyle={{ color: "#aaa" }}
-                                zIndex={3000}
-                                zIndexInverse={1000}
                                 listMode="SCROLLVIEW"
                                 scrollViewProps={{ nestedScrollEnabled: true }}
                                 style={styles.dropdownStyle}
@@ -115,7 +159,7 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
                             />
                         </View>
                         <View style={[styles.nameContainer, { marginTop: 5 }]}>
-                            <View style={[styles.nameFieldContainer, { width: "47%"}]}>
+                            {/* <View style={[styles.nameFieldContainer, { width: "47%"}]}>
                                 <Text style={styles.label}>Floor No *</Text>
                                 <TextInput
                                     style={[styles.inputField, { paddingHorizontal: 12 }]}
@@ -126,8 +170,35 @@ export default function EditFlatModal({ visible, onClose, selectedFlat }) {
                                     onChangeText={(text) => handleChange("floor_no")(text)}
                                     inputMode='numeric'
                                 />
+                            </View> */}
+                            <View style={[styles.nameFieldContainer, { width: "47%" }]}>
+                                <Text style={styles.label}>Floor No *</Text>
+                                <DropDownPicker
+                                    open={openFloor}
+                                    value={formData.floor_no}
+                                    items={floorItems}
+                                    setOpen={setOpenFloor}
+                                    setValue={(callback) => {
+                                        const value = typeof callback === 'function' ? callback(formData.floor_no) : callback;
+                                        handleChange("floor_no")(value);
+                                    }}
+                                    setItems={setFloorItems}
+                                    placeholder="Select Floor"
+                                    placeholderStyle={{ color: "#aaa" }}
+                                    zIndex={3000}
+                                    zIndexInverse={1000}
+                                    listMode="SCROLLVIEW"
+                                    scrollViewProps={{ nestedScrollEnabled: true }}
+                                    style={styles.dropdownStyle}
+                                    dropDownContainerStyle={styles.dropDownContainerStyle}
+                                    arrowIconStyle={{ tintColor: '#aaa' }}
+                                    listItemLabelStyle={{ fontSize: 15, color: "#fff" }}
+                                    listItemContainerStyle={{ height: 40 }}
+                                    textStyle={{ fontSize: 15, color: '#fff' }}
+                                    tickIconStyle={{ tintColor: '#fff' }}
+                                />
                             </View>
-                            <View style={[styles.nameFieldContainer, { width: "47%"}]}>
+                            <View style={[styles.nameFieldContainer, { width: "47%" }]}>
                                 <Text style={styles.label}>Flat No *</Text>
                                 <TextInput
                                     style={[styles.inputField, { paddingHorizontal: 12 }]}

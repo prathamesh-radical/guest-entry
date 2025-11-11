@@ -57,6 +57,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         color: "#D2E3F4",
         fontWeight: "bold",
         marginTop: 5,
+        fontSize: 13,
     },
     iconMainContainer: {
         padding: 10,

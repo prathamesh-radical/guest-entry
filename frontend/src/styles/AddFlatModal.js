@@ -79,8 +79,8 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         gap: "4%",
-        marginVertical: 8
-,    },
+        marginVertical: 8,
+    },
     button: {
         justifyContent: 'center',
         alignContent: 'center',

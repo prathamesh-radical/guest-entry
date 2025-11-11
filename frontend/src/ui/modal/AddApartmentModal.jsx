@@ -6,7 +6,7 @@ import useFunctions from '../../hooks/useFunctions';
 import { Styles } from '../../styles/AddApartmentModal';
 
 export default function AddApartmentModal({ setShowForm }) {
-    const { addApartment, loading, handleChange, orientation } = useContext(MyContext);
+    const { addApartment: formData, loading, handleChange, orientation } = useContext(MyContext);
     const { handleAddApartment } = useFunctions();
     const { height, width } = Dimensions.get('window');
     const isPortrait = orientation === 'portrait';
@@ -20,9 +20,18 @@ export default function AddApartmentModal({ setShowForm }) {
                 style={styles.inputField}
                 placeholder="Enter apartment name"
                 placeholderTextColor="#aaa"
-                value={addApartment}
+                value={formData?.apartment_name}
                 keyboardType="default"
-                onChangeText={(text) => handleChange("addApartment")(text)}
+                onChangeText={(text) => handleChange("apartment_name")(text)}
+            />
+            <Text style={[styles.label, {marginTop: 15}]}>No. of Floors *</Text>
+            <TextInput
+                style={styles.inputField}
+                placeholder="Enter number of floors"
+                placeholderTextColor="#aaa"
+                value={formData?.total_floors}
+                keyboardType="numeric"
+                onChangeText={(text) => handleChange("total_floors")(text)}
             />
             <View style={styles.buttonContainer}>
                 <Button

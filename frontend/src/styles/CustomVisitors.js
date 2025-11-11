@@ -43,9 +43,10 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         fontSize: 14,
     },
     filterSection: {
+        flex: 1,
         backgroundColor: '#0f1419',
         padding: 16,
-        marginBottom: 15,
+        marginBottom: isPortrait ? "4%" : "2%",
         borderRadius: 10,
     },
     filterMainContainer: {
@@ -107,34 +108,37 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         alignItems: 'center',
         marginBottom: 16,
     },
+    statsRow: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: isPortrait ? 10 : 20,
+    },
     statsContainer: {
         flexDirection: 'row',
-        width: isPortrait ? '100%' : '25%',
-        marginTop: !isPortrait && "-2%",
+        width: isPortrait ? '31.5%' : '30.3%',
         borderRadius: 12,
     },
     statCard: {
         flex: 1,
         borderRadius: 12,
-        paddingVertical: isPortrait ? 16 : "14%",
-        paddingHorizontal: isPortrait ? "10%" : "15%",
+        paddingVertical: 10,
+        paddingHorizontal: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     statLabel: {
         color: '#fff',
-        fontSize: 14,
+        fontSize: 12,
         opacity: 0.9,
     },
     statContent: {
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        width: '65%',
     },
     statNumber: {
         color: '#fff',
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
     },
     scrollView: {
@@ -143,7 +147,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     scrollContainer: {
         padding: 15,
         paddingTop: 0,
-        paddingHorizontal: isPortrait ? "4%" : "7%",
+        paddingHorizontal: "2%",
     },
     visitorListContainer: {
         flexDirection: 'row',
@@ -155,11 +159,11 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         backgroundColor: '#0f1419',
         borderRadius: 12,
         padding: 16,
-        marginBottom: 15,
+        marginBottom: isPortrait ? 15 : 5,
         borderLeftWidth: 3,
         borderLeftColor: '#6600ff',
         boxShadow: '0px 2px 4px #6600ff',
-        width: isPortrait ? "100%" : "48%",
+        width: isPortrait ? "100%" : "49%",
     },
     cardHeader: {
         flexDirection: 'row',
@@ -186,7 +190,6 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-        flex: 1,
     },
     statusBadge: {
         paddingHorizontal: 10,

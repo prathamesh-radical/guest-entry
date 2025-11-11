@@ -4,7 +4,7 @@ import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/nativ
 import useFunctions from '../hooks/useFunctions';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { MyContext } from '../context/ContextProvider';
-import { ActivityIndicator, Button, Icon, IconButton } from 'react-native-paper';
+import { ActivityIndicator, Button, Icon, IconButton, Switch } from 'react-native-paper';
 import { Styles } from '../styles/AddVisitors';
 import LinearGradient from 'react-native-linear-gradient';
 import LoadingScreen from './LoadingScreen';
@@ -12,7 +12,7 @@ import { AnimatedScreen } from '../components/AnimatedScreen';
 
 export default function AddVisitors() {
     const {
-        visitorFormData: formData, apartmentData, flatData, handleChange, dropdownValues, setDropdownValues, loading, refreshing, onRefresh, setVisitorFormData, orientation, setGradientColor
+        visitorFormData: formData, apartmentData, flatData, handleChange, dropdownValues, setDropdownValues, loading, refreshing, onRefresh, setVisitorFormData, orientation, setGradientColor, onAddToggleSwitch 
     } = useContext(MyContext);
     const { Wrapper, handleAddVisitor } = useFunctions();
     const route = useRoute();
@@ -36,24 +36,35 @@ export default function AddVisitors() {
     const navigation = useNavigation();
 
     const filterPerson = flatData.find((item) => (
-        item.apartment_name === dropdownValues.apartment && item.floor_no === dropdownValues.floor && item.flat_no === dropdownValues.flat
+        item.apartment_name === dropdownValues.apartment &&
+        String(item.floor_no) === String(dropdownValues.floor) &&
+        String(item.flat_no) === String(dropdownValues.flat)
     ));
-    const personName = filterPerson ? `${filterPerson.first_name} ${filterPerson.last_name}` : '';
+    const personName = filterPerson ? `${filterPerson.first_name || ''} ${filterPerson.last_name || ''}`.trim() : '';
+
+    useFocusEffect(
+        useCallback(() => {
+            Wrapper(route);
+            setGradientColor(['#59AC5E', '#3BADA0']);
+            return;
+        }, [])
+    );
 
     useEffect(() => {
-        const floorList = flatData.filter((item) => item.apartment_name === dropdownValues.apartment).reduce((unique, item) => {
-            return unique.some((floor) => floor.value === item.floor_no) ? unique : [
-                ...unique, {
-                    label: item.floor_no,
-                    value: item.floor_no,
-                    key: `${item.apartment_name}-${item.floor_no}`,
-                    icon: () => <Icon source="floor-plan" size={24} color="#fff" />
-                },
-            ];
-        }, []);
+        const selectedApartment = apartmentData.find((a) => a.apartment_name === dropdownValues.apartment);
+        const totalFloors = selectedApartment ? Number(selectedApartment.total_floors) : 0;
+
+        const floorList = totalFloors > 0 ? Array.from({ length: totalFloors }, (_, i) => ({
+            label: (i + 1).toString(),
+            value: i + 1,
+            key: `${dropdownValues.apartment}-${i + 1}`,
+            icon: () => <Icon source="floor-plan" size={24} color="#fff" />
+        })) : [];
 
         const flatList = flatData
-            .filter((item) => item.apartment_name === dropdownValues.apartment && item.floor_no === dropdownValues.floor)
+            .filter((item) => {
+                return item.apartment_name === dropdownValues.apartment && String(item.floor_no) === String(dropdownValues.floor);
+            })
             .map((item) => ({
                 label: item.flat_no,
                 value: item.flat_no,
@@ -66,6 +77,7 @@ export default function AddVisitors() {
             floor: floorList,
             flat: flatList,
         }));
+
         setVisitorFormData((prev) => ({
             ...prev,
             apartment_name: dropdownValues.apartment,
@@ -73,15 +85,7 @@ export default function AddVisitors() {
             flat_no: dropdownValues.flat,
             person_to_meet: personName,
         }));
-    }, [dropdownValues.apartment, dropdownValues.floor, flatData, personName]);
-
-    useFocusEffect(
-        useCallback(() => {
-            Wrapper(route);
-            setGradientColor(['#59AC5E', '#3BADA0']);
-            return;
-        }, [])
-    );
+    }, [dropdownValues.apartment, dropdownValues.floor, flatData, personName, apartmentData]);
 
     if (loading) return <LoadingScreen />;
 
@@ -103,31 +107,36 @@ export default function AddVisitors() {
             >
                 <AnimatedScreen>
                     <View style={styles.sectionContainer}>
+
+                        {/* Visitor Information Section */}
                         <View style={styles.sectionHeader}>
                             <View style={styles.sectionDot} />
                             <Text style={styles.sectionTitle}>Visitor Information</Text>
                         </View>
-
-                        <Text style={styles.fieldLabel}>First Name *</Text>
-                        <TextInput
-                            style={styles.inputField}
-                            placeholder="Enter visitor's first name*"
-                            placeholderTextColor="#aaa"
-                            value={formData.first_name}
-                            keyboardType="default"
-                            onChangeText={(text) => handleChange("first_name")(text)}
-                        />
-
-                        <Text style={styles.fieldLabel}>Last Name *</Text>
-                        <TextInput
-                            style={styles.inputField}
-                            placeholder="Enter visitor's last name*"
-                            placeholderTextColor="#aaa"
-                            value={formData.last_name}
-                            keyboardType="default"
-                            onChangeText={(text) => handleChange("last_name")(text)}
-                        />
-
+                        <View style={styles.nameRow}>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>First Name *</Text>
+                                <TextInput
+                                    style={styles.inputField}
+                                    placeholder="Enter first name"
+                                    placeholderTextColor="#aaa"
+                                    value={formData.first_name}
+                                    keyboardType="default"
+                                    onChangeText={(text) => handleChange("first_name")(text)}
+                                />
+                            </View>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>Last Name *</Text>
+                                <TextInput
+                                    style={styles.inputField}
+                                    placeholder="Enter last name"
+                                    placeholderTextColor="#aaa"
+                                    value={formData.last_name}
+                                    keyboardType="default"
+                                    onChangeText={(text) => handleChange("last_name")(text)}
+                                />
+                            </View>
+                        </View>
                         <Text style={styles.fieldLabel}>Phone Number *</Text>
                         <TextInput
                             style={styles.inputField}
@@ -150,11 +159,20 @@ export default function AddVisitors() {
                             numberOfLines={4}
                             textAlignVertical="top"
                         />
-                    </View>
 
-                    {/* Vehicle Details Section */}
-                    <View style={styles.sectionContainer}>
-                        <View style={styles.sectionHeader}>
+                        {/* Visitor Status */}
+                        <View style={[styles.sectionHeader, { marginTop: 15 }]}>
+                            <View style={[styles.sectionDot, { backgroundColor: '#9715FA' }]} />
+                            <Text style={styles.sectionTitle}>Visitor Status</Text>
+                        </View>
+
+                        <View style={styles.vehicleRow}>
+                            <Text style={styles.fieldLabel}>Is Active? *</Text>
+                            <Switch color='#4dff94' value={formData?.isActive} onValueChange={onAddToggleSwitch} />
+                        </View>
+
+                        {/* Vehicle Details Section */}
+                        <View style={[styles.sectionHeader, { marginTop: 20 }]}>
                             <View style={[styles.sectionDot, { backgroundColor: '#4A90E2' }]} />
                             <Text style={styles.sectionTitle}>Vehicle Details</Text>
                         </View>
@@ -185,25 +203,23 @@ export default function AddVisitors() {
                                     onChangeValue={(value) => handleChange("vehicle_type")(value)}
                                 />
                             </View>
+                            {(formData?.vehicle_type === "Car" || formData?.vehicle_type === "Bike") && (
+                                <View style={styles.nameContain}>
+                                    <Text style={styles.fieldLabel}>Vehicle Number *</Text>
+                                    <TextInput
+                                        style={[styles.inputField, { paddingVertical: 8 }]}
+                                        placeholder="Enter vehicle no."
+                                        placeholderTextColor="#888"
+                                        value={formData.vehicle_no}
+                                        keyboardType="default"
+                                        onChangeText={(text) => handleChange("vehicle_no")(text)}
+                                    />
+                                </View>
+                            )}
                         </View>
-                        {(formData?.vehicle_type === "Car" || formData?.vehicle_type === "Bike") && (
-                            <>
-                                <Text style={styles.fieldLabel}>Vehicle Number *</Text>
-                                <TextInput
-                                    style={styles.inputField}
-                                    placeholder="Enter vehicle number"
-                                    placeholderTextColor="#888"
-                                    value={formData.vehicle_no}
-                                    keyboardType="default"
-                                    onChangeText={(text) => handleChange("vehicle_no")(text)}
-                                />
-                            </>
-                        )}
-                    </View>
 
-                    {/* Visit Information Section */}
-                    <View style={styles.sectionContainer}>
-                        <View style={styles.sectionHeader}>
+                        {/* Visit Information Section */}
+                        <View style={[styles.sectionHeader, { marginTop: 15 }]}>
                             <View style={[styles.sectionDot, { backgroundColor: '#D133AB' }]} />
                             <Text style={styles.sectionTitle}>Visit Information</Text>
                         </View>
@@ -232,54 +248,58 @@ export default function AddVisitors() {
                             onChangeValue={(value) => handleChange("apartment_name")(value)}
                         />
 
-                        <Text style={styles.fieldLabel}>Select Floor No.*</Text>
-                        <DropDownPicker
-                            open={open.floor}
-                            value={dropdownValues.floor}
-                            items={items.floor}
-                            setOpen={() => setOpen((prev) => ({ ...prev, floor: !prev.floor }))}
-                            setValue={(callback) => setDropdownValues((prev) => ({ ...prev, floor: callback(prev.floor) }))}
-                            setItems={(newItems) => setItems((prev) => ({ ...prev, floor: newItems }))}
-                            placeholder="Select Floor No.*"
-                            placeholderStyle={{ color: "#888" }}
-                            zIndex={2000}
-                            zIndexInverse={3000}
-                            listMode="SCROLLVIEW"
-                            scrollViewProps={{ nestedScrollEnabled: true }}
-                            style={styles.dropdownStyle}
-                            dropDownContainerStyle={styles.dropDownContainerStyle}
-                            arrowIconStyle={{ tintColor: '#888' }}
-                            listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
-                            listItemContainerStyle={{ height: 40 }}
-                            textStyle={{ fontSize: 15, color: '#fff' }}
-                            tickIconStyle={{ tintColor: '#fff' }}
-                            onChangeValue={(value) => handleChange("floor_no")(value)}
-                        />
-
-                        <Text style={styles.fieldLabel}>Select Flat *</Text>
-                        <DropDownPicker
-                            open={open.flat}
-                            value={dropdownValues.flat}
-                            items={items.flat}
-                            setOpen={() => setOpen((prev) => ({ ...prev, flat: !prev.flat }))}
-                            setValue={(callback) => setDropdownValues((prev) => ({ ...prev, flat: callback(prev.flat) }))}
-                            setItems={(newItems) => setItems((prev) => ({ ...prev, flat: newItems }))}
-                            placeholder="Choose Flat"
-                            placeholderStyle={{ color: "#888" }}
-                            zIndex={1000}
-                            zIndexInverse={4000}
-                            listMode="SCROLLVIEW"
-                            scrollViewProps={{ nestedScrollEnabled: true }}
-                            style={styles.dropdownStyle}
-                            dropDownContainerStyle={styles.dropDownContainerStyle}
-                            arrowIconStyle={{ tintColor: '#888' }}
-                            listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
-                            listItemContainerStyle={{ height: 40 }}
-                            textStyle={{ fontSize: 15, color: '#fff' }}
-                            tickIconStyle={{ tintColor: '#fff' }}
-                            onChangeValue={(value) => handleChange("flat_no")(value)}
-                        />
-
+                        <View style={styles.nameRow}>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>Select Floor No.*</Text>
+                                <DropDownPicker
+                                    open={open.floor}
+                                    value={dropdownValues.floor}
+                                    items={items.floor}
+                                    setOpen={() => setOpen((prev) => ({ ...prev, floor: !prev.floor }))}
+                                    setValue={(callback) => setDropdownValues((prev) => ({ ...prev, floor: callback(prev.floor) }))}
+                                    setItems={(newItems) => setItems((prev) => ({ ...prev, floor: newItems }))}
+                                    placeholder="Select Floor"
+                                    placeholderStyle={{ color: "#888" }}
+                                    zIndex={2000}
+                                    zIndexInverse={3000}
+                                    listMode="SCROLLVIEW"
+                                    scrollViewProps={{ nestedScrollEnabled: true }}
+                                    style={styles.dropdownStyle}
+                                    dropDownContainerStyle={styles.dropDownContainerStyle}
+                                    arrowIconStyle={{ tintColor: '#888' }}
+                                    listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
+                                    listItemContainerStyle={{ height: 40 }}
+                                    textStyle={{ fontSize: 15, color: '#fff' }}
+                                    tickIconStyle={{ tintColor: '#fff' }}
+                                    onChangeValue={(value) => handleChange("floor_no")(value)}
+                                />
+                            </View>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>Select Flat *</Text>
+                                <DropDownPicker
+                                    open={open.flat}
+                                    value={dropdownValues.flat}
+                                    items={items.flat}
+                                    setOpen={() => setOpen((prev) => ({ ...prev, flat: !prev.flat }))}
+                                    setValue={(callback) => setDropdownValues((prev) => ({ ...prev, flat: callback(prev.flat) }))}
+                                    setItems={(newItems) => setItems((prev) => ({ ...prev, flat: newItems }))}
+                                    placeholder="Choose Flat"
+                                    placeholderStyle={{ color: "#888" }}
+                                    zIndex={1000}
+                                    zIndexInverse={4000}
+                                    listMode="SCROLLVIEW"
+                                    scrollViewProps={{ nestedScrollEnabled: true }}
+                                    style={styles.dropdownStyle}
+                                    dropDownContainerStyle={styles.dropDownContainerStyle}
+                                    arrowIconStyle={{ tintColor: '#888' }}
+                                    listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
+                                    listItemContainerStyle={{ height: 40 }}
+                                    textStyle={{ fontSize: 15, color: '#fff' }}
+                                    tickIconStyle={{ tintColor: '#fff' }}
+                                    onChangeValue={(value) => handleChange("flat_no")(value)}
+                                />
+                            </View>
+                        </View>
                         <Text style={styles.fieldLabel}>Person to Meet *</Text>
                         <TextInput
                             style={[styles.inputField, { backgroundColor: '#262626', color: "#888" }]}
@@ -290,25 +310,25 @@ export default function AddVisitors() {
                             onChangeText={(text) => handleChange("person_to_meet")(text)}
                             editable={false}
                         />
-                    </View>
 
-                    {/* Submit Button */}
-                    <LinearGradient
-                        colors={['#43A049', '#27A697']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.buttonContainer}
-                    >
-                        <Button
-                            mode="contained"
-                            style={styles.submitButton}
-                            labelStyle={styles.submitButtonLabel}
-                            onPress={(event) => handleAddVisitor(event)}
-                            icon={() => <Icon source="floppy" size={20} color="#fff" />}
+                        {/* Submit Button */}
+                        <LinearGradient
+                            colors={['#43A049', '#27A697']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.buttonContainer}
                         >
-                            Register Visitor Entry
-                        </Button>
-                    </LinearGradient>
+                            <Button
+                                mode="contained"
+                                style={styles.submitButton}
+                                labelStyle={styles.submitButtonLabel}
+                                onPress={(event) => handleAddVisitor(event)}
+                                icon={() => <Icon source="floppy" size={20} color="#fff" />}
+                            >
+                                Register Visitor Entry
+                            </Button>
+                        </LinearGradient>
+                    </View>
                 </AnimatedScreen>
             </ScrollView>
         </View>

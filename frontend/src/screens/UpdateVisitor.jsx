@@ -4,7 +4,7 @@ import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/nativ
 import useFunctions from '../hooks/useFunctions';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { MyContext } from '../context/ContextProvider';
-import { Button, Icon, IconButton } from 'react-native-paper';
+import { Button, Icon, IconButton, Switch } from 'react-native-paper';
 import { Styles } from '../styles/AddVisitors';
 import LinearGradient from 'react-native-linear-gradient';
 import LoadingScreen from './LoadingScreen';
@@ -12,7 +12,7 @@ import { AnimatedScreen } from '../components/AnimatedScreen';
 
 export default function UpdateVisitor() {
     const {
-        updateVisitorFormData: formData, apartmentData, flatData, handleChange, dropdownValues, setDropdownValues, loading, refreshing, onRefresh, setUpdateVisitorFormData, orientation, setGradientColor
+        updateVisitorFormData: formData, apartmentData, flatData, handleChange, dropdownValues, setDropdownValues, loading, refreshing, onRefresh, setUpdateVisitorFormData, orientation, setGradientColor, onUpdateToggleSwitch
     } = useContext(MyContext);
     const { Wrapper, handleUpdateVisitor } = useFunctions();
     const route = useRoute();
@@ -35,28 +35,43 @@ export default function UpdateVisitor() {
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
     const selectedData = route.params.item;
-
-    // Derive person to meet using the selected visitor's apartment/floor/flat
     const filterPerson = flatData.find((item) => (
-        item.apartment_name === (selectedData?.apartment_name || dropdownValues.apartment) && item.floor_no === (selectedData?.floor_no || dropdownValues.floor) && item.flat_no === (selectedData?.flat_no || dropdownValues.flat)
+        item.apartment_name === (selectedData?.apartment_name || dropdownValues.apartment) &&
+        String(item.floor_no) === String(selectedData?.floor_no || dropdownValues.floor) &&
+        String(item.flat_no) === String(selectedData?.flat_no || dropdownValues.flat)
     ));
-    const personName = filterPerson ? `${filterPerson.first_name} ${filterPerson.last_name}` : '';
+    const personName = selectedData?.person_to_meet || (filterPerson ? `${filterPerson.first_name || ''} ${filterPerson.last_name || ''}`.trim() : '');
+    const displayApartment = dropdownValues.apartment ?? selectedData?.apartment_name ?? null;
+    const displayFloor = dropdownValues.floor ?? selectedData?.floor_no ?? null;
+    const displayFlat = dropdownValues.flat ?? selectedData?.flat_no ?? null;
+
+    useFocusEffect(
+        useCallback(() => {
+            Wrapper(route);
+            setGradientColor(['#635DFF', '#9715FA']);
+            return;
+        }, [])
+    );
 
     useEffect(() => {
-        // Build floor list from flats for the selected apartment
         const apartmentToUse = selectedData?.apartment_name || dropdownValues.apartment;
         const floorToUse = selectedData?.floor_no || dropdownValues.floor;
 
-        const floorList = flatData.filter((item) => item.apartment_name === apartmentToUse).reduce((unique, item) => {
-            return unique.some((floor) => floor.value === item.floor_no) ? unique : [
-                ...unique, {
-                    label: item.floor_no,
-                    value: item.floor_no,
-                    key: `${item.apartment_name}-${item.floor_no}`,
-                    icon: () => <Icon source="floor-plan" size={24} color="#fff" />
-                },
-            ];
-        }, []);
+        const floorList = flatData
+            .filter((item) => item.apartment_name === apartmentToUse)
+            .reduce((unique, item) => {
+                return unique.some((floor) => String(floor.value) === String(item.floor_no))
+                    ? unique
+                    : [
+                        ...unique,
+                        {
+                            label: item.floor_no,
+                            value: item.floor_no,
+                            key: `${item.apartment_name}-${item.floor_no}`,
+                            icon: () => <Icon source="floor-plan" size={24} color="#fff" />
+                        },
+                    ];
+            }, []);
 
         const flatList = flatData
             .filter((item) => item.apartment_name === apartmentToUse && item.floor_no === floorToUse)
@@ -74,29 +89,29 @@ export default function UpdateVisitor() {
         }));
     }, [selectedData, flatData, dropdownValues.apartment, dropdownValues.floor]);
 
-    // Initial population effect - runs once when selectedData loads
     useEffect(() => {
         if (selectedData) {
             setDropdownValues((prev) => ({
                 ...prev,
-                vehicle_type: selectedData.vehicle_type || prev.vehicle_type,
-                apartment: selectedData.apartment_name || prev.apartment,
-                floor: selectedData.floor_no || prev.floor,
-                flat: selectedData.flat_no || prev.flat,
+                vehicle_type: selectedData.vehicle_type ?? prev.vehicle_type,
+                apartment: selectedData.apartment_name ?? prev.apartment,
+                floor: selectedData.floor_no ?? prev.floor,
+                flat: selectedData.flat_no ?? prev.flat,
             }));
 
             setUpdateVisitorFormData((prev) => ({
                 ...prev,
-                first_name: selectedData?.first_name || prev.first_name,
-                last_name: selectedData?.last_name || prev.last_name,
-                phone_no: selectedData?.phone_no || prev.phone_no,
-                address: selectedData?.address || prev.address,
-                vehicle_type: selectedData?.vehicle_type || prev.vehicle_type,
-                vehicle_no: selectedData?.vehicle_no || prev.vehicle_no,
-                apartment_name: selectedData?.apartment_name || prev.apartment_name,
-                floor_no: selectedData?.floor_no || prev.floor_no,
-                flat_no: selectedData?.flat_no || prev.flat_no,
-                person_to_meet: personName || prev.person_to_meet,
+                first_name: selectedData?.first_name ?? prev.first_name,
+                last_name: selectedData?.last_name ?? prev.last_name,
+                phone_no: selectedData?.phone_no ?? prev.phone_no,
+                address: selectedData?.address ?? prev.address,
+                isActive: selectedData?.is_active ?? prev.is_active,
+                vehicle_type: selectedData?.vehicle_type ?? prev.vehicle_type,
+                vehicle_no: selectedData?.vehicle_no ?? prev.vehicle_no,
+                apartment_name: selectedData?.apartment_name ?? prev.apartment_name,
+                floor_no: selectedData?.floor_no ?? prev.floor_no,
+                flat_no: selectedData?.flat_no ?? prev.flat_no,
+                person_to_meet: selectedData?.person_to_meet ?? personName ?? prev.person_to_meet,
             }));
         }
     }, [selectedData]);
@@ -137,13 +152,26 @@ export default function UpdateVisitor() {
         }));
     }, [dropdownValues.apartment, dropdownValues.floor, flatData]);
 
-    useFocusEffect(
-        useCallback(() => {
-            Wrapper(route);
-            setGradientColor(['#635DFF', '#9715FA']);
-            return;
-        }, [])
-    );
+    useEffect(() => {
+        const apt = dropdownValues.apartment ?? selectedData?.apartment_name;
+        const fl = dropdownValues.floor ?? selectedData?.floor_no;
+        const ft = dropdownValues.flat ?? selectedData?.flat_no;
+
+        if (!apt || fl == null || ft == null) return;
+
+        const match = flatData.find((item) => (
+            item.apartment_name === apt &&
+            String(item.floor_no) === String(fl) &&
+            String(item.flat_no) === String(ft)
+        ));
+
+        if (match) {
+            const name = `${match.first_name || ''} ${match.last_name || ''}`.trim();
+            if (name) {
+                setUpdateVisitorFormData((prev) => ({ ...prev, person_to_meet: name }));
+            }
+        }
+    }, [dropdownValues.apartment, dropdownValues.floor, dropdownValues.flat, flatData, selectedData, setUpdateVisitorFormData]);
 
     if (loading) return <LoadingScreen />;
 
@@ -170,25 +198,30 @@ export default function UpdateVisitor() {
                             <Text style={styles.sectionTitle}>Visitor Information</Text>
                         </View>
 
-                        <Text style={styles.fieldLabel}>First Name *</Text>
-                        <TextInput
-                            style={styles.inputField}
-                            placeholder="Enter visitor's first name*"
-                            placeholderTextColor="#aaa"
-                            value={formData.first_name}
-                            keyboardType="default"
-                            onChangeText={(text) => handleChange("first_name")(text)}
-                        />
-
-                        <Text style={styles.fieldLabel}>Last Name *</Text>
-                        <TextInput
-                            style={styles.inputField}
-                            placeholder="Enter visitor's last name*"
-                            placeholderTextColor="#aaa"
-                            value={formData.last_name}
-                            keyboardType="default"
-                            onChangeText={(text) => handleChange("last_name")(text)}
-                        />
+                        <View style={styles.nameRow}>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>First Name *</Text>
+                                <TextInput
+                                    style={styles.inputField}
+                                    placeholder="Enter first name"
+                                    placeholderTextColor="#aaa"
+                                    value={formData.first_name}
+                                    keyboardType="default"
+                                    onChangeText={(text) => handleChange("first_name")(text)}
+                                />
+                            </View>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>Last Name *</Text>
+                                <TextInput
+                                    style={styles.inputField}
+                                    placeholder="Enter last name"
+                                    placeholderTextColor="#aaa"
+                                    value={formData.last_name}
+                                    keyboardType="default"
+                                    onChangeText={(text) => handleChange("last_name")(text)}
+                                />
+                            </View>
+                        </View>
 
                         <Text style={styles.fieldLabel}>Phone Number *</Text>
                         <TextInput
@@ -212,11 +245,20 @@ export default function UpdateVisitor() {
                             numberOfLines={4}
                             textAlignVertical="top"
                         />
-                    </View>
 
-                    {/* Vehicle Details Section */}
-                    <View style={styles.sectionContainer}>
-                        <View style={styles.sectionHeader}>
+                        {/* Visitor Status */}
+                        <View style={[styles.sectionHeader, { marginTop: 15 }]}>
+                            <View style={[styles.sectionDot, { backgroundColor: '#9715FA' }]} />
+                            <Text style={styles.sectionTitle}>Visitor Status</Text>
+                        </View>
+
+                        <View style={styles.vehicleRow}>
+                            <Text style={styles.fieldLabel}>Is Active? *</Text>
+                            <Switch color='#4dff94' value={!!formData?.isActive} onValueChange={onUpdateToggleSwitch} />
+                        </View>
+
+                        {/* Vehicle Details Section */}
+                        <View style={[styles.sectionHeader, { marginTop: 20 }]}>
                             <View style={[styles.sectionDot, { backgroundColor: '#4A90E2' }]} />
                             <Text style={styles.sectionTitle}>Vehicle Details</Text>
                         </View>
@@ -247,25 +289,23 @@ export default function UpdateVisitor() {
                                     onChangeValue={(value) => handleChange("vehicle_type")(value)}
                                 />
                             </View>
+                            {(formData?.vehicle_type === "Car" || formData?.vehicle_type === "Bike") && (
+                                <View style={styles.nameContain}>
+                                    <Text style={styles.fieldLabel}>Vehicle Number *</Text>
+                                    <TextInput
+                                        style={styles.inputField}
+                                        placeholder="Enter vehicle no"
+                                        placeholderTextColor="#888"
+                                        value={formData.vehicle_no}
+                                        keyboardType="default"
+                                        onChangeText={(text) => handleChange("vehicle_no")(text)}
+                                    />
+                                </View>
+                            )}
                         </View>
-                        {(formData?.vehicle_type === "Car" || formData?.vehicle_type === "Bike") && (
-                            <>
-                                <Text style={styles.fieldLabel}>Vehicle Number *</Text>
-                                <TextInput
-                                    style={styles.inputField}
-                                    placeholder="Enter vehicle number"
-                                    placeholderTextColor="#888"
-                                    value={formData.vehicle_no}
-                                    keyboardType="default"
-                                    onChangeText={(text) => handleChange("vehicle_no")(text)}
-                                />
-                            </>
-                        )}
-                    </View>
 
-                    {/* Visit Information Section */}
-                    <View style={styles.sectionContainer}>
-                        <View style={styles.sectionHeader}>
+                        {/* Visit Information Section */}
+                        <View style={[styles.sectionHeader, { marginTop: 15 }]}>
                             <View style={[styles.sectionDot, { backgroundColor: '#D133AB' }]} />
                             <Text style={styles.sectionTitle}>Visit Information</Text>
                         </View>
@@ -273,7 +313,7 @@ export default function UpdateVisitor() {
                         <Text style={styles.fieldLabel}>Select Building *</Text>
                         <DropDownPicker
                             open={open.apartment}
-                            value={dropdownValues.apartment}
+                            value={displayApartment}
                             items={items.apartment}
                             setOpen={() => setOpen((prev) => ({ ...prev, apartment: !prev.apartment }))}
                             setValue={(callback) => setDropdownValues((prev) => ({ ...prev, apartment: callback(prev.apartment) }))}
@@ -294,53 +334,58 @@ export default function UpdateVisitor() {
                             onChangeValue={(value) => handleChange("apartment_name")(value)}
                         />
 
-                        <Text style={styles.fieldLabel}>Select Floor No.*</Text>
-                        <DropDownPicker
-                            open={open.floor}
-                            value={dropdownValues.floor}
-                            items={items.floor}
-                            setOpen={() => setOpen((prev) => ({ ...prev, floor: !prev.floor }))}
-                            setValue={(callback) => setDropdownValues((prev) => ({ ...prev, floor: callback(prev.floor) }))}
-                            setItems={(newItems) => setItems((prev) => ({ ...prev, floor: newItems }))}
-                            placeholder="Select Floor No.*"
-                            placeholderStyle={{ color: "#888" }}
-                            zIndex={2000}
-                            zIndexInverse={3000}
-                            listMode="SCROLLVIEW"
-                            scrollViewProps={{ nestedScrollEnabled: true }}
-                            style={styles.dropdownStyle}
-                            dropDownContainerStyle={styles.dropDownContainerStyle}
-                            arrowIconStyle={{ tintColor: '#888' }}
-                            listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
-                            listItemContainerStyle={{ height: 40 }}
-                            textStyle={{ fontSize: 15, color: '#fff' }}
-                            tickIconStyle={{ tintColor: '#fff' }}
-                            onChangeValue={(value) => handleChange("floor_no")(value)}
-                        />
-
-                        <Text style={styles.fieldLabel}>Select Flat *</Text>
-                        <DropDownPicker
-                            open={open.flat}
-                            value={dropdownValues.flat}
-                            items={items.flat}
-                            setOpen={() => setOpen((prev) => ({ ...prev, flat: !prev.flat }))}
-                            setValue={(callback) => setDropdownValues((prev) => ({ ...prev, flat: callback(prev.flat) }))}
-                            setItems={(newItems) => setItems((prev) => ({ ...prev, flat: newItems }))}
-                            placeholder="Choose Flat"
-                            placeholderStyle={{ color: "#888" }}
-                            zIndex={1000}
-                            zIndexInverse={4000}
-                            listMode="SCROLLVIEW"
-                            scrollViewProps={{ nestedScrollEnabled: true }}
-                            style={styles.dropdownStyle}
-                            dropDownContainerStyle={styles.dropDownContainerStyle}
-                            arrowIconStyle={{ tintColor: '#888' }}
-                            listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
-                            listItemContainerStyle={{ height: 40 }}
-                            textStyle={{ fontSize: 15, color: '#fff' }}
-                            tickIconStyle={{ tintColor: '#fff' }}
-                            onChangeValue={(value) => handleChange("flat_no")(value)}
-                        />
+                        <View style={styles.nameRow}>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>Select Floor No.*</Text>
+                                <DropDownPicker
+                                    open={open.floor}
+                                    value={displayFloor}
+                                    items={items.floor}
+                                    setOpen={() => setOpen((prev) => ({ ...prev, floor: !prev.floor }))}
+                                    setValue={(callback) => setDropdownValues((prev) => ({ ...prev, floor: callback(prev.floor) }))}
+                                    setItems={(newItems) => setItems((prev) => ({ ...prev, floor: newItems }))}
+                                    placeholder="Select Floor"
+                                    placeholderStyle={{ color: "#888" }}
+                                    zIndex={2000}
+                                    zIndexInverse={3000}
+                                    listMode="SCROLLVIEW"
+                                    scrollViewProps={{ nestedScrollEnabled: true }}
+                                    style={styles.dropdownStyle}
+                                    dropDownContainerStyle={styles.dropDownContainerStyle}
+                                    arrowIconStyle={{ tintColor: '#888' }}
+                                    listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
+                                    listItemContainerStyle={{ height: 40 }}
+                                    textStyle={{ fontSize: 15, color: '#fff' }}
+                                    tickIconStyle={{ tintColor: '#fff' }}
+                                    onChangeValue={(value) => handleChange("floor_no")(value)}
+                                />
+                            </View>
+                            <View style={styles.nameContain}>
+                                <Text style={styles.fieldLabel}>Select Flat *</Text>
+                                <DropDownPicker
+                                    open={open.flat}
+                                    value={displayFlat}
+                                    items={items.flat}
+                                    setOpen={() => setOpen((prev) => ({ ...prev, flat: !prev.flat }))}
+                                    setValue={(callback) => setDropdownValues((prev) => ({ ...prev, flat: callback(prev.flat) }))}
+                                    setItems={(newItems) => setItems((prev) => ({ ...prev, flat: newItems }))}
+                                    placeholder="Choose Flat"
+                                    placeholderStyle={{ color: "#888" }}
+                                    zIndex={1000}
+                                    zIndexInverse={4000}
+                                    listMode="SCROLLVIEW"
+                                    scrollViewProps={{ nestedScrollEnabled: true }}
+                                    style={styles.dropdownStyle}
+                                    dropDownContainerStyle={styles.dropDownContainerStyle}
+                                    arrowIconStyle={{ tintColor: '#888' }}
+                                    listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
+                                    listItemContainerStyle={{ height: 40 }}
+                                    textStyle={{ fontSize: 15, color: '#fff' }}
+                                    tickIconStyle={{ tintColor: '#fff' }}
+                                    onChangeValue={(value) => handleChange("flat_no")(value)}
+                                />
+                            </View>
+                        </View>
 
                         <Text style={styles.fieldLabel}>Person to Meet *</Text>
                         <TextInput
@@ -352,25 +397,25 @@ export default function UpdateVisitor() {
                             onChangeText={(text) => handleChange("person_to_meet")(text)}
                             editable={true}
                         />
-                    </View>
 
-                    {/* Submit Button */}
-                    <LinearGradient
-                        colors={['#635DFF', '#9715FA']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.buttonContainer}
-                    >
-                        <Button
-                            mode="contained"
-                            style={styles.submitButton}
-                            labelStyle={styles.submitButtonLabel}
-                            onPress={() => handleUpdateVisitor({ preventDefault: () => { } }, selectedData.id)}
-                            icon={() => <Icon source="square-edit-outline" size={20} color="#fff" />}
+                        {/* Submit Button */}
+                        <LinearGradient
+                            colors={['#635DFF', '#9715FA']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.buttonContainer}
                         >
-                            Update Visitor Entry
-                        </Button>
-                    </LinearGradient>
+                            <Button
+                                mode="contained"
+                                style={styles.submitButton}
+                                labelStyle={styles.submitButtonLabel}
+                                onPress={() => handleUpdateVisitor({ preventDefault: () => { } }, selectedData.id)}
+                                icon={() => <Icon source="square-edit-outline" size={20} color="#fff" />}
+                            >
+                                Update Visitor Entry
+                            </Button>
+                        </LinearGradient>
+                    </View>
                 </AnimatedScreen>
             </ScrollView>
         </View>

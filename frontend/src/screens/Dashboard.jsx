@@ -31,6 +31,7 @@ export default function Dashboard() {
 
     const flats = flatData?.map((flat) => flat.flat_no);
     const uniqueFlatData = [...new Set(flats)];
+    const TotalActive = visitorData?.map(item => item.is_active).filter(Boolean).length;
 
     const now = new Date();
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -137,49 +138,49 @@ export default function Dashboard() {
                             }]}
                         />
                         <CustomCard
+                            cardTitle="Active Visitors"
+                            cardText="Currently Inside"
+                            colors={['#3E9142', '#1C5A21']}
+                            styles={styles}
+                            iconBgColor="#679969"
+                            iconName="home-outline"
+                            value={TotalActive || 0}
+                            route="Security Hub"
+                            display="no"
+                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#407E42', top: "-45%", right: isPortrait ? "-8%" : "-6%" }]}
+                        />
+                    </View>
+                    <View style={[styles.cardContainer, {gap: isPortrait ? "4%" : "2%"}]}>
+                        <CustomCard
                             cardTitle="Total Floors"
                             cardText="Across All Buildings"
-                            colors={['#3D9041', '#1C5A21']}
+                            colors={['#23968B', '#034D41']}
                             styles={styles}
-                            iconBgColor="#699D6C"
+                            iconBgColor="#4A9F95"
                             iconName="office-building-outline"
                             value={uniqueFloorData?.length || 0}
                             route="Security Hub"
                             display="no"
                             mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
-                            customStyle={[styles.iconMainContainer, { backgroundColor: '#3E7B42', top: "-45%", right: isPortrait ? "-8%" : "-6%" }]}
+                            customStyle={[styles.iconMainContainer, {
+                                backgroundColor: '#1D887D', top: "-50%", right: isPortrait ? "-8%" : "-6%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
+                            }]}
                         />
-                        {!isPortrait && (
-                            <CustomCard
-                                cardTitle="Registered Flats"
-                                cardText="Across All Buildings And Floors"
-                                colors={['#23978C', '#034E42']}
-                                styles={styles}
-                                iconBgColor="#4DA49B"
-                                iconName="map-marker-outline"
-                                value={uniqueFlatData?.length || 0}
-                                route="Residential Units"
-                                display="yes"
-                                mainStyle={{ width: '30%' }}
-                                customStyle={[styles.iconMainContainer, { backgroundColor: '#1D7E73', top: "-50%", right: "-6%" }]}
-                            />
-                        )}
-                    </View>
-                    {isPortrait && (
                         <CustomCard
                             cardTitle="Registered Flats"
-                            cardText="Across All Buildings And Floors"
-                            colors={['#23978C', '#034E42']}
+                            cardText="Across All Buildings"
+                            colors={['#26A5DF', '#045694']}
                             styles={styles}
-                            iconBgColor="#4DA49B"
+                            iconBgColor="#4BA0CF"
                             iconName="map-marker-outline"
                             value={uniqueFlatData?.length || 0}
                             route="Residential Units"
                             display="yes"
-                            mainStyle={{ width: '65%' }}
-                            customStyle={[styles.iconMainContainer, { backgroundColor: '#1D7E73', top: "-50%", right: "-5%" }]}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#1E88C3', top: "-50%", right: "-7%" }]}
                         />
-                    )}
+                    </View>
                     <View style={styles.headingTwoContainer}>
                         <Image source={require('../../assets/icons/trend.png')} style={{ width: 20, height: 20 }} tintColor='#1E86E3' />
                         <Text style={styles.headingTwo}>Visitor Analytics</Text>

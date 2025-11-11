@@ -4,9 +4,9 @@ import { promisify } from 'util';
 
 // Add Functions
 export const AddApartment = async (req, res) => {
-    const { apartment_name } = req.body;
+    const { apartment_name, total_floors } = req.body;
 
-    if (!req?.query?.user_id || !apartment_name) {
+    if (!req?.query?.user_id || !apartment_name || !total_floors) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
 
@@ -21,7 +21,7 @@ export const AddApartment = async (req, res) => {
                     return res.status(400).json({ message: "This apartment is already registered.", success: false });
                 }
                 db.query(
-                    "INSERT INTO apartment (user_id, apartment_name) VALUES (?, ?)", [req?.query?.user_id, apartment_name],
+                    "INSERT INTO apartment (user_id, apartment_name, total_floors) VALUES (?, ?, ?)", [req?.query?.user_id, apartment_name, total_floors],
                     (err, result) => {
                         if (err) {
                             return res.status(500).json({ message: "Error while registering the apartment.", success: false });
@@ -95,19 +95,24 @@ export const AddFlat = async (req, res) => {
 };
 
 export const AddVisitor = async (req, res) => {
-    const { first_name, last_name, phone_no, address, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet } = req.body;
+    const { first_name, last_name, phone_no, address, isActive, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet } = req.body;
 
-    if (!req?.query?.user_id || !first_name || !last_name || !apartment_name || !floor_no || !flat_no || !person_to_meet || !vehicle_no ||
-        (vehicle_type === "bike" || vehicle_type === "car") && !vehicle_no
+    if (
+        !req?.query?.user_id || !first_name || !last_name || !phone_no || !address || !isActive || !apartment_name || !floor_no || !flat_no || !person_to_meet
     ) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
 
+    if ((vehicle_type === "car" || vehicle_type === "bike") && !vehicle_no) {
+        return res.status(400).json({ message: "Vehicle number is required when vehicle type is car or bike.", success: false });
+    }
+
     try {
         db.query(
-            "INSERT INTO visitor (user_id, first_name, last_name, phone_no, address, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [req?.query?.user_id, first_name, last_name, phone_no, address, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet],
+            "INSERT INTO visitor (user_id, first_name, last_name, phone_no, address, is_active, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [req?.query?.user_id, first_name, last_name, phone_no, address, isActive, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet],
             (err, result) => {
                 if (err) {
+                    console.log("err", err);
                     return res.status(500).json({ message: "Error while registering the visitor.", success: false });
                 }
                 if (result.affectedRows > 0) {
@@ -118,11 +123,83 @@ export const AddVisitor = async (req, res) => {
             }
         );
     } catch (error) {
+        console.log("error", error);
         return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 };
 
 // Update Functions
+export const UpdateApartment = async (req, res) => {
+    const { apartment_name, total_floors, id } = req.body;
+    const { user_id } = req.query;
+
+    if (!user_id || !id || !apartment_name || !total_floors) {
+        return res.status(400).json({ message: "All fields are required", success: false });
+    }
+
+    try {
+        db.query("SELECT * FROM apartment WHERE id = ? AND user_id = ?", [id, user_id], (err, selectResults) => {
+            if (err) {
+                return res.status(500).json({ message: "Error checking apartment", success: false });
+            }
+
+            if (!selectResults || selectResults.length === 0) {
+                return res.status(404).json({ message: "No apartment found with the provided id", success: false });
+            }
+
+            const currentApartment = selectResults[0];
+            const oldName = currentApartment.apartment_name;
+            const oldFloors = currentApartment.total_floors;
+
+            if (oldName === apartment_name && Number(oldFloors) === Number(total_floors)) {
+                return res.status(200).json({ message: "Apartment updated successfully (no changes)", success: true });
+            }
+
+            const performUpdate = () => {
+                db.query("UPDATE apartment SET apartment_name = ?, total_floors = ? WHERE id = ? AND user_id = ?", [apartment_name, total_floors, id, user_id], (err, updateResult) => {
+                    if (err) {
+                        return res.status(500).json({ message: "Error while updating the apartment.", success: false });
+                    }
+
+                    if (updateResult.affectedRows === 0) {
+                        return res.status(404).json({ message: "No record found with the provided id", success: false });
+                    }
+
+                    if (oldName !== apartment_name) {
+                        db.query("UPDATE flat SET apartment_name = ? WHERE apartment_name = ? AND user_id = ?", [apartment_name, oldName, user_id], (err) => {
+                            if (err) {
+                                return res.status(200).json({ message: "Apartment updated successfully, but failed to update related flats.", success: true });
+                            }
+
+                            return res.status(200).json({ message: "Apartment updated successfully.", success: true });
+                        });
+                    } else {
+                        return res.status(200).json({ message: "Apartment updated successfully.", success: true });
+                    }
+                });
+            };
+
+            if (oldName !== apartment_name) {
+                db.query("SELECT * FROM apartment WHERE apartment_name = ? AND user_id = ? AND id != ?", [apartment_name, user_id, id], (err, nameResults) => {
+                    if (err) {
+                        return res.status(500).json({ message: "Error checking existing apartment name", success: false });
+                    }
+
+                    if (nameResults && nameResults.length > 0) {
+                        return res.status(400).json({ message: "This apartment name is already registered by another record.", success: false });
+                    }
+
+                    performUpdate();
+                });
+            } else {
+                performUpdate();
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+};
+
 export const UpdateFlat = async (req, res) => {
     const { first_name, last_name, phone_no, apartment_name, floor_no, flat_no, id } = req.body;
     const { user_id } = req.query;
@@ -185,72 +262,20 @@ export const UpdateFlat = async (req, res) => {
     }
 };
 
-export const UpdateApartment = async (req, res) => {
-    const { apartment_name, id } = req.body;
-    const { user_id } = req.query;
-
-    if (!user_id || !id || !apartment_name) {
-        return res.status(400).json({ message: "All fields are required", success: false });
-    }
-
-    try {
-        db.query("SELECT * FROM apartment WHERE id = ? AND user_id = ?", [id, user_id], (err, selectResults) => {
-            if (err) {
-                return res.status(500).json({ message: "Error checking apartment", success: false });
-            }
-
-            if (!selectResults || selectResults.length === 0) {
-                return res.status(404).json({ message: "No apartment found with the provided id", success: false });
-            }
-
-            const currentApartment = selectResults[0];
-            const oldName = currentApartment.apartment_name;
-
-            if (oldName === apartment_name) {
-                return res.status(200).json({ message: "Apartment updated successfully (no changes)", success: true });
-            }
-
-            db.query("SELECT * FROM apartment WHERE apartment_name = ? AND user_id = ? AND id != ?", [apartment_name, user_id, id], (err, nameResults) => {
-                if (err) {
-                    return res.status(500).json({ message: "Error checking existing apartment name", success: false });
-                }
-
-                if (nameResults && nameResults.length > 0) {
-                    return res.status(400).json({ message: "This apartment name is already registered by another record.", success: false });
-                }
-
-                db.query("UPDATE apartment SET apartment_name = ? WHERE id = ? AND user_id = ?", [apartment_name, id, user_id], (err, updateResult) => {
-                    if (err) {
-                        return res.status(500).json({ message: "Error while updating the apartment.", success: false });
-                    }
-
-                    if (updateResult.affectedRows === 0) {
-                        return res.status(404).json({ message: "No record found with the provided id", success: false });
-                    }
-
-                    db.query("UPDATE flat SET apartment_name = ? WHERE apartment_name = ? AND user_id = ?", [apartment_name, oldName, user_id], (err) => {
-                        if (err) {
-                            return res.status(200).json({ message: "Apartment updated successfully, but failed to update related flats.", success: true });
-                        }
-
-                        return res.status(200).json({ message: "Apartment updated successfully.", success: true });
-                    });
-                });
-            });
-        });
-    } catch (error) {
-        return res.status(500).json({ message: "Internal Server Error", success: false });
-    }
-};
-
 export const UpdateVisitor = async (req, res) => {
-    const { first_name, last_name, phone_no, address, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet, id } = req.body;
+    const {
+        first_name, last_name, phone_no, address, isActive, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet, id
+    } = req.body;
     const { user_id } = req.query;
 
-    if (!user_id || !id || !first_name || !last_name || !apartment_name || !floor_no || !flat_no || !person_to_meet || (
-        (vehicle_type === "bike" || vehicle_type === "car") && !vehicle_no)
+    if (
+        !user_id || !id || !first_name || !last_name || !phone_no || !address || !vehicle_type || !apartment_name || !floor_no || !flat_no || !person_to_meet
     ) {
         return res.status(400).json({ message: "All fields are required", success: false });
+    }
+
+    if ((vehicle_type === "car" || vehicle_type === "bike") && !vehicle_no) {
+        return res.status(400).json({ message: "Vehicle number is required when vehicle type is car or bike.", success: false });
     }
 
     try {
@@ -264,8 +289,8 @@ export const UpdateVisitor = async (req, res) => {
             }
 
             db.query(
-                "UPDATE visitor SET first_name = ?, last_name = ?, phone_no = ?, address = ?, vehicle_type = ?, vehicle_no = ?, apartment_name = ?, floor_no = ?, flat_no = ?, person_to_meet = ? WHERE id = ? AND user_id = ?",
-                [first_name, last_name, phone_no, address, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet, id, user_id],
+                "UPDATE visitor SET first_name = ?, last_name = ?, phone_no = ?, address = ?, is_active = ?, vehicle_type = ?, vehicle_no = ?, apartment_name = ?, floor_no = ?, flat_no = ?, person_to_meet = ? WHERE id = ? AND user_id = ?",
+                [first_name, last_name, phone_no, address, isActive, vehicle_type, vehicle_no, apartment_name, floor_no, flat_no, person_to_meet, id, user_id],
                 (err, updateResult) => {
                     if (err) {
                         if (err.code === 'ETIMEDOUT') {

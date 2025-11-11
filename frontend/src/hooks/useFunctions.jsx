@@ -117,7 +117,7 @@ export default function useFunctions() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ apartment_name: addApartment }),
+                body: JSON.stringify(addApartment),
             });
 
             const data = await response.json();
@@ -163,7 +163,7 @@ export default function useFunctions() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ apartment_name: updateApartment, id: Number(id) }),
+                body: JSON.stringify({ ...updateApartment, id: Number(id) }),
             });
 
             const data = await response.json();
@@ -288,7 +288,7 @@ export default function useFunctions() {
     async function handleUpdateFlat(event, id, onClose) {
         event.preventDefault();
         setLoading(true);
-        console.log("id", id);
+
         try {
             const token = await AsyncStorage.getItem("token");
             const userId = await AsyncStorage.getItem("id");
@@ -309,7 +309,6 @@ export default function useFunctions() {
                     title: "Oops!",
                     message: data.message,
                 });
-                console.log("not ok", data);
             } else {
                 showToast({
                     type: 'success',
@@ -326,7 +325,6 @@ export default function useFunctions() {
                 title: "Oops!",
                 message: error.message,
             });
-            console.log("error", error);
         } finally {
             setLoading(false);
         }

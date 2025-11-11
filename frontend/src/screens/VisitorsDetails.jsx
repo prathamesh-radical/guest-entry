@@ -1,12 +1,12 @@
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useContext, useState } from 'react';
-import { View, ScrollView, TextInput, TouchableOpacity, StyleSheet, RefreshControl, Dimensions } from 'react-native';
+import { View, ScrollView, RefreshControl, Dimensions } from 'react-native';
 import useFunctions from '../hooks/useFunctions';
-import { Icon, IconButton, Searchbar, Text } from 'react-native-paper';
+import { IconButton, Searchbar, Text } from 'react-native-paper';
 import { MyContext } from '../context/ContextProvider';
 import VisitorSortMenu from '../ui/menu/VisitorSortMenu';
 import CalendarModal from '../ui/modal/CalendarModal';
-import { formatDate, formatDateTime, formatTime } from '../utils/formatData';
+import { formatDate, formatDateTime } from '../utils/formatData';
 import { Styles } from '../styles/VisitorsDetails';
 import { AnimatedScreen } from '../components/AnimatedScreen';
 import LinearGradient from 'react-native-linear-gradient';
@@ -144,6 +144,8 @@ export default function VisitorsDetails() {
     });
 
     const totalVisitors = filteredData.length;
+    const TotalActive = selectedData?.map(item => item.is_active).filter(Boolean).length;
+    const TotalDeparted = selectedData?.map(item => !item.is_active).filter(Boolean).length;
 
     const toggleSort = (columnKey) => {
         setSortColumn(columnKey);
@@ -215,24 +217,8 @@ export default function VisitorsDetails() {
                                     {selected && <IconButton icon="close" size={10} iconColor='red' mode='outlined' style={styles.closeBtn} onPress={() => setSelected(null)} />}
                                 </View>
                             </View>
-                            {!isPortrait && (
-                                <LinearGradient
-                                    colors={['#1E88E5', '#1565C0']}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 1 }}
-                                    style={styles.statsContainer}
-                                >
-                                    <View style={styles.statCard}>
-                                        <View style={styles.statContent}>
-                                            <Text style={styles.statLabel}>Total</Text>
-                                            <Text style={styles.statValue}>{totalVisitors}</Text>
-                                        </View>
-                                        <IconButton icon="trending-up" size={24} iconColor="#fff" style={styles.statIcon} />
-                                    </View>
-                                </LinearGradient>
-                            )}
                         </View>
-                        {isPortrait && (
+                        <View style={styles.statsRow}>
                             <LinearGradient
                                 colors={['#1E88E5', '#1565C0']}
                                 start={{ x: 0, y: 0 }}
@@ -244,10 +230,38 @@ export default function VisitorsDetails() {
                                         <Text style={styles.statLabel}>Total</Text>
                                         <Text style={styles.statValue}>{totalVisitors}</Text>
                                     </View>
-                                    <IconButton icon="trending-up" size={24} iconColor="#fff" style={styles.statIcon} />
+                                    <IconButton icon="trending-up" size={20} iconColor="#fff" style={styles.statIcon} />
                                 </View>
                             </LinearGradient>
-                        )}
+                            <LinearGradient
+                                colors={['#43A047', '#2E7D32']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={styles.statsContainer}
+                            >
+                                <View style={styles.statCard}>
+                                    <View style={styles.statContent}>
+                                        <Text style={styles.statLabel}>Active</Text>
+                                        <Text style={styles.statValue}>{TotalActive}</Text>
+                                    </View>
+                                    <IconButton icon="account-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                                </View>
+                            </LinearGradient>
+                            <LinearGradient
+                                colors={['#26A69A', '#018A7C']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={styles.statsContainer}
+                            >
+                                <View style={styles.statCard}>
+                                    <View style={styles.statContent}>
+                                        <Text style={styles.statLabel}>Departed</Text>
+                                        <Text style={styles.statValue}>{TotalDeparted}</Text>
+                                    </View>
+                                    <IconButton icon="clock-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                                </View>
+                            </LinearGradient>
+                        </View>
                     </View>
 
                     {/* Visitors List */}
@@ -261,6 +275,17 @@ export default function VisitorsDetails() {
                                         </Text>
                                         <Text style={styles.visitorName}>
                                             {visitor.person_to_meet}
+                                        </Text>
+                                        <Text style={[
+                                            styles.visitorNumber,
+                                            {
+                                                backgroundColor: visitor?.is_active ? '#318235' : 'transparent',
+                                                color: visitor?.is_active ? '#fff' : '#26A69A',
+                                                borderWidth: visitor?.is_active ? 0 : 1,
+                                                borderColor: visitor?.is_active ? 'transparent' : '#26A69A',
+                                            }
+                                        ]}>
+                                            {visitor?.is_active ? 'active' : 'departed'}
                                         </Text>
                                     </View>
                                     <Text style={styles.dateTime}>{formatDateTime(visitor.datetime)}</Text>

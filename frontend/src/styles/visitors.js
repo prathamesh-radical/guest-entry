@@ -28,7 +28,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         padding: 16,
         marginBottom: isPortrait ? "4%" : "3%",
         borderRadius: 10,
-        marginHorizontal: isPortrait ? "4%" : "3%",
+        marginHorizontal: isPortrait ? "2%" : 0,
     },
     filterMainContainer: {
         flex: 1,
@@ -126,23 +126,28 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         margin: 0,
         marginRight: 4,
     },
+    statsRow: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: isPortrait ? 10 : 20,
+    },
     statsContainer: {
         flexDirection: 'row',
-        width: isPortrait ? '100%' : '25%',
-        marginTop: !isPortrait && "-2%",
+        width: isPortrait ? '31.5%' : '30.3%',
         borderRadius: 12,
     },
     statCard: {
         flex: 1,
         borderRadius: 12,
-        paddingVertical: isPortrait ? 16 : "18%",
-        paddingHorizontal: isPortrait ? "10%" : "15%",
+        paddingVertical: 10,
+        paddingHorizontal: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     statContent: {
-        flex: 1,
+        // flex: 1,
+        width: '65%',
     },
     statLabel: {
         fontSize: 12,
@@ -161,14 +166,13 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     },
     listContent: {
         paddingTop: 8,
-        marginHorizontal: isPortrait ? 0 : "5%",
+        marginHorizontal: isPortrait ? 0 : "2%",
     },
     visitorListContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: isPortrait ? 'center' : 'space-between',
-        paddingHorizontal: isPortrait ? "4%" : "3%",
-        gap: isPortrait ? 0 : 12,
+        paddingHorizontal: isPortrait ? "2%" : 0,
     },
     visitorCard: {
         backgroundColor: '#0f1419',
@@ -178,7 +182,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         borderLeftWidth: 3,
         borderLeftColor: '#6600ff',
         boxShadow: '0px 2px 4px #6600ff',
-        width: isPortrait ? "100%" : "48%",
+        width: isPortrait ? "100%" : "49%",
     },
     cardHeader: {
         flexDirection: 'row',

@@ -26,12 +26,14 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: isPortrait ? "2%" : "5%",
+        paddingHorizontal: isPortrait ? "2%" : "2%",
     },
     filterSection: {
         padding: 16,
         backgroundColor: '#0f1419',
-        margin: 10,
+        margin: isPortrait ? 10 : 0,
+        marginBottom: isPortrait ? "4%" : "2%",
+        marginHorizontal: 0,
         borderRadius: 12,
     },
     filterMainContainer: {
@@ -132,32 +134,37 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     closeBtn: {
         borderColor: "red",
     },
+    statsRow: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: isPortrait ? 10 : 20,
+    },
     statsContainer: {
         flexDirection: 'row',
-        width: isPortrait ? '100%' : '25%',
-        marginTop: !isPortrait && "-2%",
+        width: isPortrait ? '31.5%' : '30.3%',
         borderRadius: 12,
     },
     statCard: {
         flex: 1,
         borderRadius: 12,
-        paddingVertical: isPortrait ? 16 : "14%",
-        paddingHorizontal: isPortrait ? "10%" : "15%",
+        paddingVertical: 10,
+        paddingHorizontal: 13,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     statContent: {
-        flex: 1,
+        // flex: 1,
+        width: '60%',
     },
     statLabel: {
-        fontSize: 13,
+        fontSize: 12,
         color: '#fff',
         opacity: 0.9,
         marginBottom: 4,
     },
     statValue: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
     },
@@ -165,7 +172,6 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: isPortrait ? 'center' : 'space-between',
-        paddingHorizontal: isPortrait ? "4%" : "2%",
         gap: isPortrait ? 0 : 12,
     },
     visitorCard: {
@@ -176,7 +182,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         borderLeftWidth: 3,
         borderLeftColor: '#6600ff',
         boxShadow: '0px 2px 4px #6600ff',
-        width: isPortrait ? "100%" : "48%",
+        width: isPortrait ? "100%" : "49%",
     },
     cardHeader: {
         flexDirection: 'row',

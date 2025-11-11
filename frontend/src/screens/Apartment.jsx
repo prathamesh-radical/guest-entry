@@ -13,7 +13,7 @@ import AlertModal from '../ui/modal/AlertModal';
 import EditApartmentModal from '../ui/modal/EditApartmentModal';
 
 export default function Apartment() {
-    const { apartmentData, flatData, refreshing, onRefresh, orientation, setGradientColor } = useContext(MyContext);
+    const { apartmentData: data, refreshing, onRefresh, orientation, setGradientColor } = useContext(MyContext);
     const { Wrapper, handleDeleteApartment } = useFunctions();
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -45,20 +45,7 @@ export default function Apartment() {
         }, [])
     );
 
-    const filteredApartment = apartmentData.map((apt) => {
-        const apartmentFlats = flatData.filter(
-            (flat) => flat.apartment_name === apt.apartment_name
-        );
-
-        const uniqueFloors = [...new Set(apartmentFlats.map(flat => flat.floor_no))];
-
-        return {
-            ...apt,
-            floors: uniqueFloors.length
-        };
-    });
-
-    const filteredData = filteredApartment.filter((item) =>
+    const filteredData = data.filter((item) =>
         item.apartment_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -182,7 +169,7 @@ export default function Apartment() {
                                             </View>
                                             <View style={styles.cardDetails}>
                                                 <View style={styles.cardContent}>
-                                                    <Text style={styles.cardDate}>{item.floors} Floors</Text>
+                                                    <Text style={styles.cardDate}>{item.total_floors || 0} Floors</Text>
                                                     <Text style={styles.cardDate}>
                                                         Added: {item.date ? new Date(item.date).toLocaleDateString('en-GB') : null}
                                                     </Text>

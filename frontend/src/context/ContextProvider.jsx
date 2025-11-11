@@ -110,8 +110,8 @@ export const MyContextProvider = ({ children }) => {
         confirm_password: null,
     });
     const [loginFormData, setLoginFormData] = useState({ email: null, password: null });
-    const [addApartment, setAddApartment] = useState(null);
-    const [updateApartment, setUpdateApartment] = useState(null);
+    const [addApartment, setAddApartment] = useState({ apartment_name: null, total_floors: null });
+    const [updateApartment, setUpdateApartment] = useState({ apartment_name: null, total_floors: null });
     const [flatFormData, setFlatFormData] = useState({
         first_name: null,
         last_name: null,
@@ -135,6 +135,7 @@ export const MyContextProvider = ({ children }) => {
         last_name: null,
         phone_no: null,
         address: null,
+        isActive: true,
         vehicle_type: null,
         vehicle_no: null,
         apartment_name: null,
@@ -147,6 +148,7 @@ export const MyContextProvider = ({ children }) => {
         last_name: null,
         phone_no: null,
         address: null,
+        isActive: true,
         vehicle_type: null,
         vehicle_no: null,
         apartment_name: null,
@@ -179,6 +181,20 @@ export const MyContextProvider = ({ children }) => {
         }));
     }, [userData]);
 
+    const onAddToggleSwitch = () => {
+        setVisitorFormData((prev) => ({
+            ...prev,
+            isActive: !prev.isActive,
+        }));
+    }
+
+    const onUpdateToggleSwitch = () => {
+        setUpdateVisitorFormData((prev) => ({
+            ...prev,
+            isActive: !prev.isActive,
+        }));
+    }
+
     const toggleSecurePassword = () => {
         setSecurePassword(!securePassword);
     };
@@ -207,12 +223,8 @@ export const MyContextProvider = ({ children }) => {
     const handleChange = (field) => (value) => {
         setRegisterFormData(prev => ({ ...prev, [field]: value }));
         setLoginFormData(prev => ({ ...prev, [field]: value }));
-        if (field === 'addApartment') {
-            setAddApartment(value);
-        }
-        if (field === 'updateApartment') {
-            setUpdateApartment(value);
-        }
+        setAddApartment(prev => ({ ...prev, [field]: value }));
+        setUpdateApartment(prev => ({ ...prev, [field]: value }));
         setFlatFormData(prev => ({ ...prev, [field]: value }));
         setUpdateFlatFormData(prev => ({ ...prev, [field]: value }));
         setVisitorFormData(prev => ({ ...prev, [field]: value }));
@@ -237,8 +249,8 @@ export const MyContextProvider = ({ children }) => {
             confirm_password: null,
         });
         setLoginFormData({ email: null, password: null });
-        setAddApartment(null);
-        setUpdateApartment(null);
+        setAddApartment({ apartment_name: null, total_floors: null });
+        setUpdateApartment({ apartment_name: null, total_floors: null });
         setValue(null);
         setFlatFormData({
             first_name: null,
@@ -262,6 +274,7 @@ export const MyContextProvider = ({ children }) => {
             last_name: null,
             phone_no: null,
             address: null,
+            isActive: true,
             vehicle_type: null,
             vehicle_no: null,
             apartment_name: null,
@@ -274,6 +287,7 @@ export const MyContextProvider = ({ children }) => {
             last_name: null,
             phone_no: null,
             address: null,
+            isActive: true,
             vehicle_type: null,
             vehicle_no: null,
             apartment_name: null,
@@ -322,7 +336,7 @@ export const MyContextProvider = ({ children }) => {
     };
 
     const values = {
-        wrapperProps, setWrapperProps, MORE_ICON, modalsVisible, toggleModal, registerFormData, handleChange, handleSetNull, showToast, toastConfig, loading, setLoading, loginFormData, refreshKey, refreshing, onRefresh, isTokenChecked, triggerDataRefresh, addApartment, updateApartment, value, setValue, loader, apartmentData, handleLogout, flatFormData, flatData, dropdownValues, setDropdownValues, visitorFormData, setVisitorFormData, visitorData, userData, section, setSection, orientation, selected, setSelected, securePassword, toggleSecurePassword, secureConfirmPassword, toggleSecureConfirmPassword, gradientColor, setGradientColor, userDataToUpdate, setUserDataToUpdate, userPasswordUpdate, updateFlatFormData, setUpdateApartment, setFlatFormData, setUpdateFlatFormData, updateVisitorFormData, setUpdateVisitorFormData
+        wrapperProps, setWrapperProps, MORE_ICON, modalsVisible, toggleModal, registerFormData, handleChange, handleSetNull, showToast, toastConfig, loading, setLoading, loginFormData, refreshKey, refreshing, onRefresh, isTokenChecked, triggerDataRefresh, addApartment, updateApartment, value, setValue, loader, apartmentData, handleLogout, flatFormData, flatData, dropdownValues, setDropdownValues, visitorFormData, setVisitorFormData, visitorData, userData, section, setSection, orientation, selected, setSelected, securePassword, toggleSecurePassword, secureConfirmPassword, toggleSecureConfirmPassword, gradientColor, setGradientColor, userDataToUpdate, setUserDataToUpdate, userPasswordUpdate, updateFlatFormData, setUpdateApartment, setFlatFormData, setUpdateFlatFormData, updateVisitorFormData, setUpdateVisitorFormData, onAddToggleSwitch,onUpdateToggleSwitch 
     };
 
     return (
