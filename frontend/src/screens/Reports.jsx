@@ -11,6 +11,7 @@ import * as XLSX from 'xlsx';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 import { AnimatedScreen } from '../components/AnimatedScreen';
+import CustomCard from '../components/Card';
 
 export default function Reports() {
     const { visitorData, refreshing, onRefresh, orientation, showToast, setGradientColor } = useContext(MyContext);
@@ -72,9 +73,9 @@ export default function Reports() {
 
         const totalVisitors = filtered.length;
 
-        const activeNow = filtered.filter(v => !v.checkoutTime && !v.departureTime).length;
+        const activeNow = filtered.map(v => v.is_active).filter(Boolean).length;
 
-        const departed = filtered.filter(v => v.checkoutTime || v.departureTime).length;
+        const departed = filtered.map(v => !v.is_active).filter(Boolean).length;
 
         const calculatePreviousPeriod = () => {
             if (!visitorData || visitorData.length === 0) return 0;
@@ -293,7 +294,6 @@ export default function Reports() {
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-            // Set column widths
             ws['!cols'] = [
                 { wch: 20 }, // Date & Time
                 { wch: 20 }, // Name
@@ -304,7 +304,6 @@ export default function Reports() {
 
             XLSX.utils.book_append_sheet(wb, ws, selectedPeriod.replace(/\s+/g, '_'));
 
-            // Write to file
             const wbout = XLSX.write(wb, { type: 'binary', bookType: 'xlsx' });
 
             const fileName = `Visitor_Report_${selectedPeriod.replace(/\s+/g, '_')}_${Date.now()}.xlsx`;
@@ -494,7 +493,7 @@ export default function Reports() {
                                 ]}
                                 onPress={() => {
                                     setSelectedPeriod(period);
-                                    setLastFilePath(null); // Reset file path when period changes
+                                    setLastFilePath(null);
                                 }}
                             >
                                 <Text style={[
@@ -509,47 +508,70 @@ export default function Reports() {
 
                     {/* Metrics Grid */}
                     <View style={styles.metricsGrid}>
-                        {/* Total Visitors */}
-                        <LinearGradient
-                            colors={['#1B74C7', '#114D9F']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={styles.metricCard}
-                        >
-                            <View style={styles.metricHeader}>
-                                <Text style={styles.metricLabel}>Total Visitors</Text>
-                                <View style={[styles.metricIcon, { backgroundColor: '#2D6CB4', borderTopRightRadius: 12, borderBottomLeftRadius: 50 }]}>
-                                    <Icon name="users" size={20} color="#e0f2fe" />
-                                </View>
-                            </View>
-                            <Text style={styles.metricValue}>{metrics.totalVisitors}</Text>
-                            <Text style={styles.metricSubtext}>
-                                {selectedPeriod === 'This Year' ? 'All year records' :
-                                    selectedPeriod === 'This Month' ? 'This month' :
-                                        selectedPeriod === 'This Week' ? 'This week' : 'Today'}
-                            </Text>
-                            <Text style={styles.metricChange}>
-                                {metrics.changePercent > 0 ? '↗' : metrics.changePercent < 0 ? '↘' : '→'}
-                                {metrics.changePercent > 0 ? '+' : ''}{metrics.changePercent}%
-                            </Text>
-                        </LinearGradient>
-
-                        {/* Peak Hour */}
-                        <LinearGradient
-                            colors={['#0284c7', '#0369a1']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={styles.metricCard}
-                        >
-                            <View style={styles.metricHeader}>
-                                <Text style={styles.metricLabel}>Peak Hour</Text>
-                                <View style={[styles.metricIcon, { backgroundColor: '#1E7CB6', borderTopRightRadius: 12, borderBottomLeftRadius: 50 }]}>
-                                    <Icon name="users" size={20} color="#e0f2fe" />
-                                </View>
-                            </View>
-                            <Text style={styles.metricValue}>{peakHour.hour}</Text>
-                            <Text style={styles.metricSubtext}>{formatPeakHour(peakHour.hour)}</Text>
-                        </LinearGradient>
+                        <CustomCard
+                            cardTitle="Total Visitors"
+                            cardText="All time records"
+                            colors={['#1D7CCF', '#0F4696']}
+                            styles={styles}
+                            iconBgColor="#578BC5"
+                            iconName="account-multiple-outline"
+                            value={metrics.totalVisitors || 0}
+                            route="Analytics"
+                            display="no"
+                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            customStyle={[styles.iconMainContainer, {
+                                backgroundColor: '#2B67B1', top: "-50%", right: isPortrait ? "-8%" : "-6%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
+                            }]}
+                            reportText={
+                                <Text style={styles.metricChange}>
+                                    <Icon name="trending-up" size={13} color="#fff" />{' '}
+                                    {metrics.changePercent > 0 ? '+' : ''} {metrics.changePercent}%
+                                </Text>
+                            }
+                        />
+                        <CustomCard
+                            cardTitle="Active Now"
+                            cardText="Currently Inside"
+                            colors={['#3E9142', '#1C5A21']}
+                            styles={styles}
+                            iconBgColor="#679969"
+                            iconName="pulse"
+                            value={metrics.activeNow || 0}
+                            route="Analytics"
+                            display="no"
+                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#407E42', top: "-45%", right: isPortrait ? "-8%" : "-6%" }]}
+                        />
+                    </View>
+                    <View style={styles.metricsGrid}>
+                        <CustomCard
+                            cardTitle="Departed"
+                            cardText="Completedi visits"
+                            colors={['#23968B', '#034D41']}
+                            styles={styles}
+                            iconBgColor="#4A9F95"
+                            iconName="office-building-outline"
+                            value={metrics.departed || 0}
+                            route="Analytics"
+                            display="no"
+                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            customStyle={[styles.iconMainContainer, {
+                                backgroundColor: '#1D887D', top: "-50%", right: isPortrait ? "-8%" : "-6%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
+                            }]}
+                        />
+                        <CustomCard
+                            cardTitle="Peak Hour"
+                            cardText={`${formatPeakHour(peakHour.hour)} daily`}
+                            colors={['#26A5DF', '#045694']}
+                            styles={styles}
+                            iconBgColor="#4BA0CF"
+                            iconName="clock-outline"
+                            value={peakHour.hour || 0}
+                            route="Analytics"
+                            display="no"
+                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#1E88C3', top: "-50%", right: "-7%" }]}
+                        />
                     </View>
 
                     {/* Vehicle Analysis */}

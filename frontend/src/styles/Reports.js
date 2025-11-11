@@ -6,7 +6,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         backgroundColor: '#0f1419',
     },
     scrollContainer: {
-        padding: 16,
+        paddingVertical: 5,
         paddingHorizontal: isPortrait ? 16 : "7%",
     },
     header: {
@@ -58,7 +58,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         backgroundColor: '#1a2332',
         borderRadius: 8,
         padding: 4,
-        marginBottom: 20,
+        marginBottom: 10,
     },
     periodButton: {
         flex: 1,
@@ -78,66 +78,65 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     periodTextActive: {
         color: '#ffffff',
     },
-    metricsGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: "5%",
-        marginBottom: 24,
+    cardContentContainer: {
+        padding: 12,
+        borderRadius: 10,
+        width: "47.9%",
     },
-    metricCard: {
+    contentWrap: {
         flex: 1,
-        minWidth: '47%',
-        borderRadius: 12,
-        padding: 16,
+        flexDirection: "row",
+        justifyContent: "space-between",
     },
-    metricCardBlue: {
-        backgroundColor: '#2563eb',
-    },
-    metricCardGreen: {
-        backgroundColor: '#059669',
-    },
-    metricCardTeal: {
-        backgroundColor: '#0d9488',
-    },
-    metricCardLightBlue: {
-        backgroundColor: '#0284c7',
-    },
-    metricHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    metricLabel: {
+    cardTitle: {
+        color: "#D2E3F4",
+        fontWeight: "bold",
+        marginTop: 5,
         fontSize: 13,
-        color: '#e0f2fe',
-        fontWeight: '500',
     },
-    metricIcon: {
+    iconMainContainer: {
+        padding: 10,
+        paddingBottom: 18,
+        paddingLeft: 18,
         position: "absolute",
-        top: "-90%",
-        right: isPortrait ? "-11%" : "-5.5%",
-        padding: 15,
-        paddingLeft: 30,
-        paddingBottom: 30,
-        borderTopRightRadius: 12,
+        borderTopRightRadius: 10,
         borderBottomLeftRadius: 50,
     },
-    metricValue: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#ffffff',
-        marginBottom: 4,
+    iconContainer: {
+        padding: 8,
+        borderRadius: 12,
+        shadowColor: '#fff',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 4,
+        elevation: 10,
     },
-    metricSubtext: {
-        fontSize: 12,
-        color: '#e0f2fe',
-        opacity: 0.9,
+    cardSubTitle: {
+        textAlign: "left",
+        fontSize: 30,
+        color: "#fff",
+        fontWeight: "bold",
+    },
+    textContainer: {
+        flex: 1,
+        marginTop: 10,
+    },
+    cardText: {
+        color: "#BACFE7",
+        fontSize: 13,
+    },
+    metricsGrid: {
+        flexDirection: 'row',
+        // flexWrap: 'wrap',
+        gap: "5%",
+        marginBottom: 15,
     },
     metricChange: {
-        fontSize: 12,
+        position: "absolute",
+        bottom: 18,
+        left: 13,
+        fontSize: 13,
         color: '#e0f2fe',
-        marginTop: 4,
     },
     sectionCard: {
         backgroundColor: '#1a2332',

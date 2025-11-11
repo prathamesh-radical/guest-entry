@@ -177,7 +177,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     visitorCard: {
         backgroundColor: '#0f1419',
         borderRadius: 12,
-        padding: 16,
+        padding: 13,
         marginBottom: 15,
         borderLeftWidth: 3,
         borderLeftColor: '#6600ff',

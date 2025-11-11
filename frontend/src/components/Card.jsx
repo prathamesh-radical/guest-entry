@@ -4,7 +4,9 @@ import { View, Text, TouchableWithoutFeedback, Image, Dimensions } from 'react-n
 import LinearGradient from 'react-native-linear-gradient';
 import { Icon } from 'react-native-paper';
 
-export default function CustomCard({ route, colors, styles, cardTitle, cardText, iconBgColor, iconName, value, display, mainStyle, customStyle }) {
+export default function CustomCard({
+    route, colors, styles, cardTitle, cardText, iconBgColor, iconName, value, display, mainStyle, customStyle, reportText
+}) {
     const navigation = useNavigation();
     const isFullWidth = iconName === "map-marker-outline";
 
@@ -33,6 +35,7 @@ export default function CustomCard({ route, colors, styles, cardTitle, cardText,
                         <Icon source="eye" size={15} color="#BACFE7" /> <Text style={styles.cardText}>Tap to explore</Text>
                     </Text>
                 )}
+                {reportText}
             </LinearGradient>
         </TouchableWithoutFeedback>
     );
