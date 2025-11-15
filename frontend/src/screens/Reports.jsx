@@ -518,9 +518,9 @@ export default function Reports() {
                             value={metrics.totalVisitors || 0}
                             route="Analytics"
                             display="no"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "47%" }}
                             customStyle={[styles.iconMainContainer, {
-                                backgroundColor: '#2B67B1', top: "-50%", right: isPortrait ? "-8%" : "-6%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
+                                backgroundColor: '#2B67B1', top: "-50%", right: isPortrait ? "-8%" : "-4%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
                             }]}
                             reportText={
                                 <Text style={styles.metricChange}>
@@ -539,8 +539,8 @@ export default function Reports() {
                             value={metrics.activeNow || 0}
                             route="Analytics"
                             display="no"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
-                            customStyle={[styles.iconMainContainer, { backgroundColor: '#407E42', top: "-45%", right: isPortrait ? "-8%" : "-6%" }]}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "47%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#407E42', top: "-45%", right: isPortrait ? "-8%" : "-4%" }]}
                         />
                     </View>
                     <View style={styles.metricsGrid}>
@@ -554,9 +554,9 @@ export default function Reports() {
                             value={metrics.departed || 0}
                             route="Analytics"
                             display="no"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "47%" }}
                             customStyle={[styles.iconMainContainer, {
-                                backgroundColor: '#1D887D', top: "-50%", right: isPortrait ? "-8%" : "-6%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
+                                backgroundColor: '#1D887D', top: "-50%", right: isPortrait ? "-8%" : "-4%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
                             }]}
                         />
                         <CustomCard
@@ -569,8 +569,8 @@ export default function Reports() {
                             value={peakHour.hour || 0}
                             route="Analytics"
                             display="no"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
-                            customStyle={[styles.iconMainContainer, { backgroundColor: '#1E88C3', top: "-50%", right: "-7%" }]}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "47%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#1E88C3', top: "-50%", right: isPortrait ? "-8%" : "-4%" }]}
                         />
                     </View>
 

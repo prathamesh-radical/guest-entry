@@ -132,9 +132,9 @@ export default function Dashboard() {
                             value={apartmentData?.length || 0}
                             route="Buildings"
                             display="yes"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "46%" }}
                             customStyle={[styles.iconMainContainer, {
-                                backgroundColor: '#2E6EB8', top: "-50%", right: isPortrait ? "-8%" : "-6%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
+                                backgroundColor: '#2E6EB8', top: "-50%", right: isPortrait ? "-8%" : "-4%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
                             }]}
                         />
                         <CustomCard
@@ -147,8 +147,8 @@ export default function Dashboard() {
                             value={TotalActive || 0}
                             route="Security Hub"
                             display="no"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
-                            customStyle={[styles.iconMainContainer, { backgroundColor: '#407E42', top: "-45%", right: isPortrait ? "-8%" : "-6%" }]}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "46%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#407E42', top: "-45%", right: isPortrait ? "-8%" : "-4%" }]}
                         />
                     </View>
                     <View style={[styles.cardContainer, {gap: isPortrait ? "4%" : "2%"}]}>
@@ -162,9 +162,9 @@ export default function Dashboard() {
                             value={uniqueFloorData?.length || 0}
                             route="Security Hub"
                             display="no"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "46%" }}
                             customStyle={[styles.iconMainContainer, {
-                                backgroundColor: '#1D887D', top: "-50%", right: isPortrait ? "-8%" : "-6%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
+                                backgroundColor: '#1D887D', top: "-50%", right: isPortrait ? "-8%" : "-4%", borderTopRightRadius: 10, borderBottomLeftRadius: 50
                             }]}
                         />
                         <CustomCard
@@ -177,8 +177,8 @@ export default function Dashboard() {
                             value={uniqueFlatData?.length || 0}
                             route="Residential Units"
                             display="yes"
-                            mainStyle={{ width: isPortrait ? "47.9%" : "30%" }}
-                            customStyle={[styles.iconMainContainer, { backgroundColor: '#1E88C3', top: "-50%", right: "-7%" }]}
+                            mainStyle={{ width: isPortrait ? "47.9%" : "46%" }}
+                            customStyle={[styles.iconMainContainer, { backgroundColor: '#1E88C3', top: "-50%", right: isPortrait ? "-8%" : "-4%", }]}
                         />
                     </View>
                     <View style={styles.headingTwoContainer}>

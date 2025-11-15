@@ -114,15 +114,19 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         gap: isPortrait ? 10 : 20,
     },
     statsContainer: {
+        flex: 1,
         flexDirection: 'row',
-        width: isPortrait ? '31.5%' : '30.3%',
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 12,
+        paddingLeft: isPortrait ? 13 : 20,
+        paddingVertical: 10,
     },
     statCard: {
         flex: 1,
         borderRadius: 12,
         paddingVertical: 10,
-        paddingHorizontal: 16,
+        paddingHorizontal: 13,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -133,13 +137,17 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         opacity: 0.9,
     },
     statContent: {
-        flexDirection: 'column',
-        width: '65%',
+        flex: 1,
     },
     statNumber: {
         color: '#fff',
         fontSize: 24,
         fontWeight: 'bold',
+    },
+    statIcon: {
+        margin: 0,
+        position: 'absolute',
+        right: isPortrait ? 0 : 13,
     },
     scrollView: {
         flex: 1,
@@ -147,7 +155,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     scrollContainer: {
         padding: 15,
         paddingTop: 0,
-        paddingHorizontal: "2%",
+        paddingHorizontal: "4%",
     },
     visitorListContainer: {
         flexDirection: 'row',
@@ -158,7 +166,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     visitorCard: {
         backgroundColor: '#0f1419',
         borderRadius: 12,
-        padding: 13,
+        padding: 15,
         marginBottom: isPortrait ? 15 : 5,
         borderLeftWidth: 3,
         borderLeftColor: '#6600ff',

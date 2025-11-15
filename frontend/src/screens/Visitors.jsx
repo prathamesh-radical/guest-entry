@@ -225,7 +225,16 @@ export default function Visitors() {
                                         <Text style={styles.filterPlaceholder}>Filter by date</Text>
                                     )}
                                 </View>
-                                {selected && <IconButton icon="close" size={10} iconColor='red' mode='outlined' style={styles.closeBtn} onPress={() => setSelected(null)} />}
+                                {selected && (
+                                    <IconButton
+                                        icon="close"
+                                        size={10}
+                                        iconColor='red'
+                                        mode='outlined'
+                                        style={styles.closeBtn}
+                                        onPress={() => setSelected(null)}
+                                    />
+                                )}
                             </View>
                         </View>
                     </View>
@@ -237,13 +246,11 @@ export default function Visitors() {
                             end={{ x: 1, y: 1 }}
                             style={styles.statsContainer}
                         >
-                            <View style={styles.statCard}>
-                                <View style={styles.statContent}>
-                                    <Text style={styles.statLabel}>Total</Text>
-                                    <Text style={styles.statValue}>{totalVisitors}</Text>
-                                </View>
-                                <IconButton icon="trending-up" size={20} iconColor="#fff" style={styles.statIcon} />
+                            <View style={styles.statContent}>
+                                <Text style={styles.statLabel}>Total</Text>
+                                <Text style={styles.statValue}>{totalVisitors}</Text>
                             </View>
+                            <IconButton icon="trending-up" size={20} iconColor="#fff" style={styles.statIcon} />
                         </LinearGradient>
                         <LinearGradient
                             colors={['#43A047', '#2E7D32']}
@@ -251,13 +258,11 @@ export default function Visitors() {
                             end={{ x: 1, y: 1 }}
                             style={styles.statsContainer}
                         >
-                            <View style={styles.statCard}>
-                                <View style={styles.statContent}>
-                                    <Text style={styles.statLabel}>Active</Text>
-                                    <Text style={styles.statValue}>{TotalActive}</Text>
-                                </View>
-                                <IconButton icon="account-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                            <View style={styles.statContent}>
+                                <Text style={styles.statLabel}>Active</Text>
+                                <Text style={styles.statValue}>{TotalActive}</Text>
                             </View>
+                            <IconButton icon="account-outline" size={20} iconColor="#fff" style={styles.statIcon} />
                         </LinearGradient>
                         <LinearGradient
                             colors={['#26A69A', '#018A7C']}
@@ -265,13 +270,11 @@ export default function Visitors() {
                             end={{ x: 1, y: 1 }}
                             style={styles.statsContainer}
                         >
-                            <View style={styles.statCard}>
-                                <View style={styles.statContent}>
-                                    <Text style={styles.statLabel}>Departed</Text>
-                                    <Text style={styles.statValue}>{TotalDeparted}</Text>
-                                </View>
-                                <IconButton icon="clock-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                            <View style={styles.statContent}>
+                                <Text style={styles.statLabel}>Departed</Text>
+                                <Text style={styles.statValue}>{TotalDeparted}</Text>
                             </View>
+                            <IconButton icon="clock-outline" size={20} iconColor="#fff" style={styles.statIcon} />
                         </LinearGradient>
                     </View>
                 </View>
@@ -297,6 +300,13 @@ export default function Visitors() {
                                         <Text style={styles.visitorName}>
                                             {item.first_name} {item.last_name}
                                         </Text>
+                                    </View>
+                                    <Text style={styles.dateTime}>{formatDateTime(item.datetime)}</Text>
+                                </View>
+
+                                <View style={styles.cardBody}>
+                                    <View style={styles.infoRow}>
+                                        <IconButton icon="bell" size={16} iconColor={item?.is_active ? '#318235' : '#26A69A'} style={styles.infoIcon} />
                                         <Text style={[
                                             styles.visitorNumber,
                                             {
@@ -309,34 +319,31 @@ export default function Visitors() {
                                             {item?.is_active ? 'active' : 'departed'}
                                         </Text>
                                     </View>
-                                    <Text style={styles.dateTime}>{formatDateTime(item.datetime)}</Text>
-                                </View>
 
-                                <View style={styles.cardBody}>
                                     <View style={styles.infoRow}>
-                                        <IconButton icon="phone" size={16} iconColor="#888" style={styles.infoIcon} />
+                                        <IconButton icon="phone-outline" size={16} iconColor="#1E88E5" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>{item.phone_no}</Text>
                                     </View>
 
                                     <View style={styles.infoRow}>
-                                        <IconButton icon="map-marker" size={16} iconColor="#888" style={styles.infoIcon} />
+                                        <IconButton icon="map-marker" size={16} iconColor="#26A69A" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>{item.address}</Text>
                                     </View>
 
                                     <View style={styles.infoRow}>
-                                        <IconButton icon="car" size={16} iconColor="#888" style={styles.infoIcon} />
+                                        <IconButton icon="car" size={16} iconColor="#29B6F6" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>
                                             {item.vehicle_type} {item.vehicle_no && `- ${item.vehicle_no}`}
                                         </Text>
                                     </View>
 
                                     <View style={styles.infoRow}>
-                                        <IconButton icon="account-group" size={16} iconColor="#888" style={styles.infoIcon} />
+                                        <IconButton icon="account-group" size={16} iconColor="#43A047" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>Meeting: {item.person_to_meet}</Text>
                                     </View>
 
                                     <View style={styles.infoRow}>
-                                        <IconButton icon="office-building" size={16} iconColor="#888" style={styles.infoIcon} />
+                                        <IconButton icon="map-marker" size={16} iconColor="#F9A825" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>
                                             {item.apartment_name} - Flat {item.flat_no}, Floor {item.floor_no}
                                         </Text>

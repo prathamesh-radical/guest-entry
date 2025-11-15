@@ -26,7 +26,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: isPortrait ? "2%" : "2%",
+        paddingHorizontal: isPortrait ? "4%" : "2%",
     },
     filterSection: {
         padding: 16,
@@ -140,9 +140,13 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         gap: isPortrait ? 10 : 20,
     },
     statsContainer: {
+        flex: 1,
         flexDirection: 'row',
-        width: isPortrait ? '31.5%' : '30.3%',
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 12,
+        paddingLeft: isPortrait ? 13 : 20,
+        paddingVertical: 10,
     },
     statCard: {
         flex: 1,
@@ -154,8 +158,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         alignItems: 'center',
     },
     statContent: {
-        // flex: 1,
-        width: '60%',
+        flex: 1,
     },
     statLabel: {
         fontSize: 12,
@@ -168,6 +171,11 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         fontWeight: 'bold',
         color: '#fff',
     },
+    statIcon: {
+        margin: 0,
+        position: 'absolute',
+        right: isPortrait ? 0 : 13,
+    },
     listSection: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -177,7 +185,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     visitorCard: {
         backgroundColor: '#0f1419',
         borderRadius: 12,
-        padding: 13,
+        padding: 15,
         marginBottom: 15,
         borderLeftWidth: 3,
         borderLeftColor: '#6600ff',
@@ -227,7 +235,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         color: '#888',
     },
     cardBody: {
-        gap: 8,
+        // gap: 8,
     },
     infoRow: {
         flexDirection: 'row',

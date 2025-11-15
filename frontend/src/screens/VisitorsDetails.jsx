@@ -225,13 +225,11 @@ export default function VisitorsDetails() {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.statsContainer}
                             >
-                                <View style={styles.statCard}>
-                                    <View style={styles.statContent}>
-                                        <Text style={styles.statLabel}>Total</Text>
-                                        <Text style={styles.statValue}>{totalVisitors}</Text>
-                                    </View>
-                                    <IconButton icon="trending-up" size={20} iconColor="#fff" style={styles.statIcon} />
+                                <View style={styles.statContent}>
+                                    <Text style={styles.statLabel}>Total</Text>
+                                    <Text style={styles.statValue}>{totalVisitors}</Text>
                                 </View>
+                                <IconButton icon="trending-up" size={20} iconColor="#fff" style={styles.statIcon} />
                             </LinearGradient>
                             <LinearGradient
                                 colors={['#43A047', '#2E7D32']}
@@ -239,13 +237,11 @@ export default function VisitorsDetails() {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.statsContainer}
                             >
-                                <View style={styles.statCard}>
-                                    <View style={styles.statContent}>
-                                        <Text style={styles.statLabel}>Active</Text>
-                                        <Text style={styles.statValue}>{TotalActive}</Text>
-                                    </View>
-                                    <IconButton icon="account-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                                <View style={styles.statContent}>
+                                    <Text style={styles.statLabel}>Active</Text>
+                                    <Text style={styles.statValue}>{TotalActive}</Text>
                                 </View>
+                                <IconButton icon="account-outline" size={20} iconColor="#fff" style={styles.statIcon} />
                             </LinearGradient>
                             <LinearGradient
                                 colors={['#26A69A', '#018A7C']}
@@ -253,13 +249,11 @@ export default function VisitorsDetails() {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.statsContainer}
                             >
-                                <View style={styles.statCard}>
-                                    <View style={styles.statContent}>
-                                        <Text style={styles.statLabel}>Departed</Text>
-                                        <Text style={styles.statValue}>{TotalDeparted}</Text>
-                                    </View>
-                                    <IconButton icon="clock-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                                <View style={styles.statContent}>
+                                    <Text style={styles.statLabel}>Departed</Text>
+                                    <Text style={styles.statValue}>{TotalDeparted}</Text>
                                 </View>
+                                <IconButton icon="clock-outline" size={20} iconColor="#fff" style={styles.statIcon} />
                             </LinearGradient>
                         </View>
                     </View>
@@ -276,6 +270,12 @@ export default function VisitorsDetails() {
                                         <Text style={styles.visitorName}>
                                             {visitor.person_to_meet}
                                         </Text>
+                                    </View>
+                                    <Text style={styles.dateTime}>{formatDateTime(visitor.datetime)}</Text>
+                                </View>
+                                <View style={styles.cardBody}>
+                                    <View style={styles.infoRow}>
+                                        <IconButton icon="bell" size={16} iconColor={visitor?.is_active ? '#318235' : '#26A69A'} style={styles.infoIcon} />
                                         <Text style={[
                                             styles.visitorNumber,
                                             {
@@ -288,11 +288,8 @@ export default function VisitorsDetails() {
                                             {visitor?.is_active ? 'active' : 'departed'}
                                         </Text>
                                     </View>
-                                    <Text style={styles.dateTime}>{formatDateTime(visitor.datetime)}</Text>
-                                </View>
-                                <View style={styles.cardBody}>
                                     <View style={styles.infoRow}>
-                                        <IconButton icon="office-building" size={16} iconColor="#888" style={styles.infoIcon} />
+                                        <IconButton icon="map-marker" size={16} iconColor="#F9A825" style={styles.infoIcon} />
                                         <Text style={styles.infoText}>
                                             {visitor.apartment_name} - Flat {visitor.flat_no}, Floor {visitor.floor_no}
                                         </Text>

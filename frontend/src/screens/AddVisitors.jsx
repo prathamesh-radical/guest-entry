@@ -269,7 +269,7 @@ export default function AddVisitors() {
                                     arrowIconStyle={{ tintColor: '#888' }}
                                     listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
                                     listItemContainerStyle={{ height: 40 }}
-                                    textStyle={{ fontSize: 15, color: '#fff' }}
+                                    textStyle={{ fontSize: 15, color: '#fff', flexWrap: 'wrap' }}
                                     tickIconStyle={{ tintColor: '#fff' }}
                                     onChangeValue={(value) => handleChange("floor_no")(value)}
                                 />
@@ -294,7 +294,7 @@ export default function AddVisitors() {
                                     arrowIconStyle={{ tintColor: '#888' }}
                                     listItemLabelStyle={{ fontSize: 15, color: '#fff' }}
                                     listItemContainerStyle={{ height: 40 }}
-                                    textStyle={{ fontSize: 15, color: '#fff' }}
+                                    textStyle={{ fontSize: 15, color: '#fff', flexWrap: 'wrap' }}
                                     tickIconStyle={{ tintColor: '#fff' }}
                                     onChangeValue={(value) => handleChange("flat_no")(value)}
                                 />

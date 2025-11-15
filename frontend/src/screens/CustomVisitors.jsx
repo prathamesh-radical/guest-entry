@@ -231,13 +231,11 @@ export default function CustomVisitors() {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.statsContainer}
                             >
-                                <View style={styles.statCard}>
-                                    <View style={styles.statContent}>
-                                        <Text style={styles.statLabel}>Total</Text>
-                                        <Text style={styles.statNumber}>{totalVisitors}</Text>
-                                    </View>
-                                    <IconButton icon="trending-up" size={20} iconColor="#fff" style={styles.statIcon} />
+                                <View style={styles.statContent}>
+                                    <Text style={styles.statLabel}>Total</Text>
+                                    <Text style={styles.statNumber}>{totalVisitors}</Text>
                                 </View>
+                                <IconButton icon="trending-up" size={20} iconColor="#fff" style={styles.statIcon} />
                             </LinearGradient>
                             <LinearGradient
                                 colors={['#43A047', '#2E7D32']}
@@ -245,13 +243,11 @@ export default function CustomVisitors() {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.statsContainer}
                             >
-                                <View style={styles.statCard}>
-                                    <View style={styles.statContent}>
-                                        <Text style={styles.statLabel}>Active</Text>
-                                        <Text style={styles.statNumber}>{TotalActive}</Text>
-                                    </View>
-                                    <IconButton icon="account-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                                <View style={styles.statContent}>
+                                    <Text style={styles.statLabel}>Active</Text>
+                                    <Text style={styles.statNumber}>{TotalActive}</Text>
                                 </View>
+                                <IconButton icon="account-outline" size={20} iconColor="#fff" style={styles.statIcon} />
                             </LinearGradient>
                             <LinearGradient
                                 colors={['#26A69A', '#018A7C']}
@@ -259,13 +255,11 @@ export default function CustomVisitors() {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.statsContainer}
                             >
-                                <View style={styles.statCard}>
-                                    <View style={styles.statContent}>
-                                        <Text style={styles.statLabel}>Departed</Text>
-                                        <Text style={styles.statNumber}>{TotalDeparted}</Text>
-                                    </View>
-                                    <IconButton icon="clock-outline" size={20} iconColor="#fff" style={styles.statIcon} />
+                                <View style={styles.statContent}>
+                                    <Text style={styles.statLabel}>Departed</Text>
+                                    <Text style={styles.statNumber}>{TotalDeparted}</Text>
                                 </View>
+                                <IconButton icon="clock-outline" size={20} iconColor="#fff" style={styles.statIcon} />
                             </LinearGradient>
                         </View>
                     </View>
@@ -288,6 +282,13 @@ export default function CustomVisitors() {
                                                 #{sortDirection.sno === 'ascending' ? filteredData.length - index : index + 1}
                                             </Text>
                                             <Text style={styles.visitorName}>{item.first_name} {item.last_name}</Text>
+                                        </View>
+                                        <Text style={styles.dateTime}>{formatDateTime(item.datetime)}</Text>
+                                    </View>
+
+                                    <View style={styles.cardBody}>
+                                        <View style={styles.infoRow}>
+                                            <IconButton icon="bell" size={16} iconColor={item?.is_active ? '#318235' : '#26A69A'} style={styles.infoIcon} />
                                             <Text style={[
                                                 styles.visitorNumber,
                                                 {
@@ -300,23 +301,20 @@ export default function CustomVisitors() {
                                                 {item?.is_active ? 'active' : 'departed'}
                                             </Text>
                                         </View>
-                                        <Text style={styles.dateTime}>{formatDateTime(item.datetime)}</Text>
-                                    </View>
 
-                                    <View style={styles.cardBody}>
                                         <View style={styles.infoRow}>
-                                            <IconButton icon="phone" size={16} iconColor="#6600ff" style={styles.infoIcon} />
+                                            <IconButton icon="phone-outline" size={16} iconColor="#1E88E5" style={styles.infoIcon} />
                                             <Text style={styles.infoText}>{item.phone_no}</Text>
                                         </View>
 
                                         <View style={styles.infoRow}>
-                                            <IconButton icon="map-marker" size={16} iconColor="#22c55e" style={styles.infoIcon} />
+                                            <IconButton icon="map-marker" size={16} iconColor="#26A69A" style={styles.infoIcon} />
                                             <Text style={styles.infoText}>{item.address}</Text>
                                         </View>
 
                                         {item.vehicle_no && (
                                             <View style={styles.infoRow}>
-                                                <IconButton icon="car" size={16} iconColor="#14b8a6" style={styles.infoIcon} />
+                                                <IconButton icon="car" size={16} iconColor="#29B6F6" style={styles.infoIcon} />
                                                 <Text style={styles.infoText}>
                                                     {item.vehicle_type} {item.vehicle_no && `- ${item.vehicle_no}`}
                                                 </Text>
@@ -324,12 +322,12 @@ export default function CustomVisitors() {
                                         )}
 
                                         <View style={styles.infoRow}>
-                                            <IconButton icon="account-tie" size={16} iconColor="#a855f7" style={styles.infoIcon} />
+                                            <IconButton icon="account-tie" size={16} iconColor="#43A047" style={styles.infoIcon} />
                                             <Text style={styles.infoText}>Meeting: {item.person_to_meet}</Text>
                                         </View>
 
                                         <View style={styles.infoRow}>
-                                            <IconButton icon="office-building" size={16} iconColor="#f59e0b" style={styles.infoIcon} />
+                                            <IconButton icon="map-marker" size={16} iconColor="#F9A825" style={styles.infoIcon} />
                                             <Text style={styles.infoText}>
                                                 {item.apartment_name} - Flat {item.flat_no}, Floor {item.floor_no}
                                             </Text>
