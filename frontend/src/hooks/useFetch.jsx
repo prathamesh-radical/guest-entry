@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BACKEND_URL } from "../utils/constants";
 
 export default function useFetch(apiEndpoint, refreshKey) {
     const [data, setData] = useState([]);
