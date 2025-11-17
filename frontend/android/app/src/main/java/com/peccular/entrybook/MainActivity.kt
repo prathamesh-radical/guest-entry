@@ -1,4 +1,4 @@
-package com.visitq
+package com.peccular.entrybook
 
 import android.os.Bundle
 import com.facebook.react.ReactActivity
