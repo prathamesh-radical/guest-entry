@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Config from "react-native-config";
+import { BACKEND_URL } from "../utils/constants";
 
 export default function useFetch(apiEndpoint, refreshKey) {
     const [data, setData] = useState([]);
@@ -14,7 +14,7 @@ export default function useFetch(apiEndpoint, refreshKey) {
             try {
                 const token = await AsyncStorage.getItem("token");
                 const id = await AsyncStorage.getItem("id");
-                const response = await fetch(Config.BACKEND_URL + apiEndpoint + `?user_id=${Number(id)}`, {
+                const response = await fetch(BACKEND_URL + apiEndpoint + `?user_id=${Number(id)}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

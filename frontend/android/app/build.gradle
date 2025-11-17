@@ -2,11 +2,6 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
-project.ext.envConfigFiles = [
-    debug: "../.env",
-    release: "../.env"
-]
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 project.ext.react = [
     enableHermes: true  // Enable Hermes
@@ -130,7 +125,6 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-device-info')
-    implementation project(':react-native-config')
     implementation project(':react-native-loader-kit')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-fs')
