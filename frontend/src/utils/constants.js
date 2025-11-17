@@ -1,5 +1,7 @@
 import { formatDate, formatTime } from "./formatData";
 
+export const BACKEND_URL="https://www.guest-entry-backend.syolosoft.com";
+
 export const CustomerDataFields = (index, item) => {
     const tableData = {
         "S. No.": index + 1,
