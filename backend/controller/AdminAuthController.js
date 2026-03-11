@@ -3,14 +3,14 @@ import jwt from "jsonwebtoken";
 import db from "../db/db.js";
 
 export const AdminRegister = async (req, res) => {
-    const { first_name, last_name, phone_no, email, password, confirm_password } = req.body;
+    const { first_name, last_name, country, phone_no, email, password, confirm_password } = req.body;
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(!emailPattern.test(email)) {
         return res.status(400).json({ message: "Please enter a valid email address.", success: false });
     }
 
-    if (!first_name || !last_name || !email || !password || !confirm_password) {
+    if (!first_name || !last_name || !country || !phone_no || !email || !password || !confirm_password) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
 
@@ -26,8 +26,8 @@ export const AdminRegister = async (req, res) => {
                 return res.status(400).json({ message: "User already exists", success: false });
             } else {
                 db.query(
-                    "INSERT INTO registration (first_name, last_name, phone_no, email, password) VALUES (?, ?, ?, ?, ?)",
-                    [first_name, last_name, phone_no, email, hashedPassword],
+                    "INSERT INTO registration (first_name, last_name, country, phone_no, email, password) VALUES (?, ?, ?, ?, ?, ?)",
+                    [first_name, last_name, country, phone_no, email, hashedPassword],
                     (err, result) => {
                         if (err) {
                             console.log("err", err);

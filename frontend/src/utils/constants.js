@@ -1,6 +1,6 @@
 import { formatDate, formatTime } from "./formatData";
 
-export const BACKEND_URL="https://www.guest-entry-backend.syolosoft.com";
+export const BACKEND_URL="http://192.168.1.15:3000";
 
 export const CustomerDataFields = (index, item) => {
     const tableData = {
