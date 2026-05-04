@@ -160,9 +160,8 @@ export const MyContextProvider = ({ children }) => {
     const [userDataToUpdate, setUserDataToUpdate] = useState({
         first_name: null, last_name: null, phone_no: null, email: null
     });
-    const [userPasswordUpdate, setUserPasswordUpdate] = useState({
-        current_password: null, new_password: null, confirm_password: null
-    });
+    const [userPasswordUpdate, setUserPasswordUpdate] = useState({ new_password: null, confirm_password: null });
+    const [verifyPassword, setVerifyPassword] = useState({ password: '', confirmPassword: '' });
     const [selected, setSelected] = useState();
     const [orientation, setOrientation] = useState('portrait');
     const [securePassword, setSecurePassword] = useState(true);
@@ -231,6 +230,7 @@ export const MyContextProvider = ({ children }) => {
         setUpdateVisitorFormData(prev => ({ ...prev, [field]: value }));
         setUserDataToUpdate(prev => ({ ...prev, [field]: value }));
         setUserPasswordUpdate(prev => ({ ...prev, [field]: value }));
+        setVerifyPassword(prev => ({ ...prev, [field]: value }));
     };
 
     const toggleModal = (modalKey, isVisible) => {
@@ -308,6 +308,10 @@ export const MyContextProvider = ({ children }) => {
             new_password: null,
             confirm_password: null,
         });
+        setVerifyPassword({
+            password: null,
+            confirm_password: null,
+        });
         setSelected();
     }
 
@@ -336,7 +340,7 @@ export const MyContextProvider = ({ children }) => {
     };
 
     const values = {
-        wrapperProps, setWrapperProps, MORE_ICON, modalsVisible, toggleModal, registerFormData, handleChange, handleSetNull, showToast, toastConfig, loading, setLoading, loginFormData, refreshKey, refreshing, onRefresh, isTokenChecked, triggerDataRefresh, addApartment, updateApartment, value, setValue, loader, apartmentData, handleLogout, flatFormData, flatData, dropdownValues, setDropdownValues, visitorFormData, setVisitorFormData, visitorData, userData, section, setSection, orientation, selected, setSelected, securePassword, toggleSecurePassword, secureConfirmPassword, toggleSecureConfirmPassword, gradientColor, setGradientColor, userDataToUpdate, setUserDataToUpdate, userPasswordUpdate, updateFlatFormData, setUpdateApartment, setFlatFormData, setUpdateFlatFormData, updateVisitorFormData, setUpdateVisitorFormData, onAddToggleSwitch,onUpdateToggleSwitch 
+        wrapperProps, setWrapperProps, MORE_ICON, modalsVisible, toggleModal, registerFormData, handleChange, handleSetNull, showToast, toastConfig, loading, setLoading, loginFormData, refreshKey, refreshing, onRefresh, isTokenChecked, triggerDataRefresh, addApartment, updateApartment, value, setValue, loader, apartmentData, handleLogout, flatFormData, flatData, dropdownValues, setDropdownValues, visitorFormData, setVisitorFormData, visitorData, userData, section, setSection, orientation, selected, setSelected, securePassword, toggleSecurePassword, secureConfirmPassword, toggleSecureConfirmPassword, gradientColor, setGradientColor, userDataToUpdate, setUserDataToUpdate, userPasswordUpdate, verifyPassword, setVerifyPassword, updateFlatFormData, setUpdateApartment, setFlatFormData, setUpdateFlatFormData, updateVisitorFormData, setUpdateVisitorFormData, onAddToggleSwitch, onUpdateToggleSwitch 
     };
 
     return (

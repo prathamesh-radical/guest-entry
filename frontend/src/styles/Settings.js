@@ -32,7 +32,7 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         paddingVertical: 20,
         paddingBottom: 40,
     },
-    
+
     // Profile Card Styles
     profileCard: {
         backgroundColor: '#0f1419',
@@ -150,11 +150,12 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
 
     // Section Header
     sectionHeader: {
-        flexDirection: 'col',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         marginBottom: 16,
         backgroundColor: '#0f1419',
-        padding: 20,
+        paddingVertical: 15,
+        paddingHorizontal: 20,
         borderRadius: 10,
     },
     sectionTitleContainer: {
@@ -166,16 +167,23 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
     sectionTitle: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#fff',
+        color: '#fff',  
     },
     editIconContainer: {
         flex: 1,
         alignItems: 'flex-end',
     },
     infoItem: {
-        flexDirection: 'col',
+        flexDirection: 'column',
         paddingVertical: 16,
         gap: 5,
+    },
+    nameContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 10,
     },
     label: {
         color: "#B0BEC5",
@@ -188,14 +196,27 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         gap: 20,
     },
     inputFieldWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: "#1D2C2D",
+        borderWidth: 1,
+        borderColor: "#1E88E5",
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        marginTop: 5,
+    },
+    inputIcon: {
+        marginRight: 10,
+    },
+    nativeInput: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row",
-        width: "100%",
+        color: '#fff',
+        fontSize: 15,
+        height: '100%',
+        marginLeft: 5,
     },
     inputField: {
-        color:"#000",
+        color: "#000",
         height: 40,
         borderWidth: 1,
         borderTopLeftRadius: 10,
@@ -245,6 +266,87 @@ export const Styles = ({ width, height, isPortrait }) => StyleSheet.create({
         height: 1,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         marginVertical: 16,
+    },
+    // Danger Zone specific styles
+    // Settings styles mein ye add/update karein
+    dangerSection: {
+        backgroundColor: '#0f1419',
+        padding: 20,
+        borderRadius: 10,
+        marginTop: 16,
+    },
+    dangerContainer: {
+        flexDirection: 'row',
+        gap: 20,
+        alignItems: 'center',
+        marginBottom: 15,
+    },
+    // Niche ke content ke liye padding
+    dangerFormContent: {
+        marginTop: 10,
+    },
+    dangerZoneContainer: {
+        marginTop: 20,
+        backgroundColor: '#1C1616',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#4D1A1A',
+        overflow: 'hidden',
+    },
+    dangerHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 15,
+        justifyContent: 'space-between',
+    },
+    dangerTitleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    dangerTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#FF5252', // Alert red
+    },
+    dangerContent: {
+        padding: 15,
+        paddingTop: 0,
+    },
+    warningBox: {
+        backgroundColor: 'rgba(255, 82, 82, 0.1)',
+        padding: 12,
+        borderRadius: 8,
+        flexDirection: 'row',
+        gap: 10,
+        marginBottom: 15,
+    },
+    warningText: {
+        flex: 1,
+        color: '#FF8A80',
+        fontSize: 13,
+        lineHeight: 18,
+    },
+    bulletPoint: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 8,
+        paddingLeft: 5,
+    },
+    bulletText: {
+        color: '#B0BEC5',
+        fontSize: 13,
+    },
+    deleteButton: {
+        marginTop: 10,
+        borderColor: '#FF5252',
+        borderWidth: 1,
+        borderRadius: 8,
+    },
+    deleteButtonLabel: {
+        color: '#FF5252',
+        fontWeight: '700',
     },
 
     // Info Card

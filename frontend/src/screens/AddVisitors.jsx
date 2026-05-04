@@ -21,12 +21,12 @@ import {
 } from '@react-navigation/native';
 import useFunctions from '../hooks/useFunctions';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {MyContext} from '../context/ContextProvider';
-import {Button, Icon, IconButton} from 'react-native-paper';
-import {Styles} from '../styles/AddVisitors';
+import { MyContext } from '../context/ContextProvider';
+import { Button, Icon, IconButton } from 'react-native-paper';
+import { Styles } from '../styles/AddVisitors';
 import LinearGradient from 'react-native-linear-gradient';
 import LoadingScreen from './LoadingScreen';
-import {AnimatedScreen} from '../components/AnimatedScreen';
+import { AnimatedScreen } from '../components/AnimatedScreen';
 
 const PURPOSE_OPTIONS = [
   {
@@ -90,14 +90,14 @@ function getFormattedTime() {
   });
 }
 
-function SectionHeader({styles, color, title, topMargin}) {
+function SectionHeader({ styles, color, title, topMargin }) {
   return (
     <View
       style={[
         styles.sectionHeader,
         topMargin && styles.sectionHeaderTopMargin,
       ]}>
-      <View style={[styles.sectionDot, {backgroundColor: color}]} />
+      <View style={[styles.sectionDot, { backgroundColor: color }]} />
       <Text style={styles.sectionTitle}>{title}</Text>
     </View>
   );
@@ -119,13 +119,13 @@ export default function AddVisitors() {
     setGradientColor,
   } = useContext(MyContext);
 
-  const {Wrapper, handleAddVisitor} = useFunctions();
+  const { Wrapper, handleAddVisitor } = useFunctions();
   const route = useRoute();
   const navigation = useNavigation();
 
-  const {height, width} = Dimensions.get('window');
+  const { height, width } = Dimensions.get('window');
   const isPortrait = orientation === 'portrait';
-  const styles = Styles({width, height, isPortrait});
+  const styles = Styles({ width, height, isPortrait });
 
   const isMounted = useRef(true);
   useEffect(() => {
@@ -200,12 +200,12 @@ export default function AddVisitors() {
 
     const floorList =
       totalFloors > 0
-        ? Array.from({length: totalFloors}, (_, i) => ({
-            label: (i + 1).toString(),
-            value: i + 1,
-            key: `${dropdownValues.apartment}-${i + 1}`,
-            icon: () => <Icon source="floor-plan" size={20} color="#fff" />,
-          }))
+        ? Array.from({ length: totalFloors }, (_, i) => ({
+          label: (i + 1).toString(),
+          value: i + 1,
+          key: `${dropdownValues.apartment}-${i + 1}`,
+          icon: () => <Icon source="floor-plan" size={20} color="#fff" />,
+        }))
         : [];
 
     const flatList = flatData
@@ -221,7 +221,7 @@ export default function AddVisitors() {
         icon: () => <Icon source="home-outline" size={20} color="#fff" />,
       }));
 
-    setItems(prev => ({...prev, floor: floorList, flat: flatList}));
+    setItems(prev => ({ ...prev, floor: floorList, flat: flatList }));
     setVisitorFormData(prev => ({
       ...prev,
       apartment_name: dropdownValues.apartment,
@@ -282,23 +282,31 @@ export default function AddVisitors() {
     open: open[key],
     value: dropdownValues[key],
     items: items[key],
-    setOpen: () => setOpen(prev => ({...prev, [key]: !prev[key]})),
+    setOpen: () => setOpen(prev => ({ ...prev, [key]: !prev[key] })),
     setValue: cb =>
-      setDropdownValues(prev => ({...prev, [key]: cb(prev[key])})),
-    setItems: newItems => setItems(prev => ({...prev, [key]: newItems})),
+      setDropdownValues(prev => ({ ...prev, [key]: cb(prev[key]) })),
+    setItems: newItems => setItems(prev => ({ ...prev, [key]: newItems })),
     zIndex,
     zIndexInverse,
     listMode: 'SCROLLVIEW',
-    scrollViewProps: {nestedScrollEnabled: true},
+    scrollViewProps: { nestedScrollEnabled: true },
     style: styles.dropdownStyle,
     dropDownContainerStyle: styles.dropDownContainerStyle,
-    placeholderStyle: {color: '#666'},
-    arrowIconStyle: {tintColor: '#888'},
-    listItemLabelStyle: {fontSize: 15, color: '#fff'},
-    listItemContainerStyle: {height: 40},
-    textStyle: {fontSize: 15, color: '#fff'},
-    tickIconStyle: {tintColor: '#fff'},
+    placeholderStyle: { color: '#666' },
+    arrowIconStyle: { tintColor: '#888' },
+    listItemLabelStyle: { fontSize: 15, color: '#fff' },
+    listItemContainerStyle: { height: 40 },
+    textStyle: { fontSize: 15, color: '#fff' },
+    tickIconStyle: { tintColor: '#fff' },
   });
+
+  const handleBackAction = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('Security Hub');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -307,7 +315,7 @@ export default function AddVisitors() {
         <IconButton
           icon="arrow-left"
           size={24}
-          onPress={() => navigation.goBack()}
+          onPress={handleBackAction}
           iconColor="#fff"
         />
         <View style={styles.headerContent}>
@@ -347,7 +355,7 @@ export default function AddVisitors() {
                   onChangeText={text => {
                     handleChange('first_name')(text);
                     if (errors.first_name)
-                      setErrors(p => ({...p, first_name: null}));
+                      setErrors(p => ({ ...p, first_name: null }));
                   }}
                 />
                 {errors.first_name ? (
@@ -364,7 +372,7 @@ export default function AddVisitors() {
                   onChangeText={text => {
                     handleChange('last_name')(text);
                     if (errors.last_name)
-                      setErrors(p => ({...p, last_name: null}));
+                      setErrors(p => ({ ...p, last_name: null }));
                   }}
                 />
                 {errors.last_name ? (
@@ -383,7 +391,7 @@ export default function AddVisitors() {
               maxLength={10}
               onChangeText={text => {
                 handleChange('phone_no')(text);
-                if (errors.phone_no) setErrors(p => ({...p, phone_no: null}));
+                if (errors.phone_no) setErrors(p => ({ ...p, phone_no: null }));
               }}
             />
             {errors.phone_no ? (
@@ -398,7 +406,7 @@ export default function AddVisitors() {
               value={formData.address}
               onChangeText={text => {
                 handleChange('address')(text);
-                if (errors.address) setErrors(p => ({...p, address: null}));
+                if (errors.address) setErrors(p => ({ ...p, address: null }));
               }}
               multiline
               numberOfLines={2}
@@ -411,23 +419,27 @@ export default function AddVisitors() {
             <Text style={styles.fieldLabel}>Number of Visitors *</Text>
             <View style={styles.counterRow}>
               <TouchableOpacity
+                activeOpacity={0.7}
                 style={styles.counterBtn}
                 onPress={() => {
                   const curr = Number(formData.visitor_count) || 1;
                   if (curr > 1) handleChange('visitor_count')(String(curr - 1));
                 }}>
-                <Icon source="minus" size={20} color="#fff" />
+                <Icon source="minus" size={22} color="#fff" />
               </TouchableOpacity>
+
               <Text style={styles.counterValue}>
                 {formData.visitor_count || '1'}
               </Text>
+
               <TouchableOpacity
+                activeOpacity={0.7}
                 style={styles.counterBtn}
                 onPress={() => {
                   const curr = Number(formData.visitor_count) || 1;
                   handleChange('visitor_count')(String(curr + 1));
                 }}>
-                <Icon source="plus" size={20} color="#fff" />
+                <Icon source="plus" size={22} color="#fff" />
               </TouchableOpacity>
             </View>
 
@@ -449,9 +461,9 @@ export default function AddVisitors() {
                 if (value !== 'Other') {
                   handleChange('other_purpose')('');
                 }
-                if (errors.purpose) setErrors(p => ({...p, purpose: null}));
+                if (errors.purpose) setErrors(p => ({ ...p, purpose: null }));
                 if (errors.other_purpose)
-                  setErrors(p => ({...p, other_purpose: null}));
+                  setErrors(p => ({ ...p, other_purpose: null }));
               }}
             />
             {errors.purpose ? (
@@ -460,7 +472,7 @@ export default function AddVisitors() {
 
             {/* ── "Other" purpose text input ── */}
             {formData.purpose === 'Other' && (
-              <View style={{marginTop: 10}}>
+              <View style={{ marginTop: 10 }}>
                 <Text style={styles.fieldLabel}>Specify Purpose *</Text>
                 <TextInput
                   style={styles.inputField}
@@ -470,7 +482,7 @@ export default function AddVisitors() {
                   onChangeText={text => {
                     handleChange('other_purpose')(text);
                     if (errors.other_purpose)
-                      setErrors(p => ({...p, other_purpose: null}));
+                      setErrors(p => ({ ...p, other_purpose: null }));
                   }}
                 />
                 {errors.other_purpose ? (
@@ -513,7 +525,7 @@ export default function AddVisitors() {
                   onChangeValue={value => {
                     handleChange('vehicle_type')(value);
                     if (errors.vehicle_type)
-                      setErrors(p => ({...p, vehicle_type: null}));
+                      setErrors(p => ({ ...p, vehicle_type: null }));
                   }}
                 />
                 {errors.vehicle_type ? (
@@ -522,25 +534,25 @@ export default function AddVisitors() {
               </View>
               {(formData?.vehicle_type === 'Car' ||
                 formData?.vehicle_type === 'Bike') && (
-                <View style={styles.nameContain}>
-                  <Text style={styles.fieldLabel}>Vehicle Number *</Text>
-                  <TextInput
-                    style={styles.inputField}
-                    placeholder="e.g. MH12AB1234"
-                    placeholderTextColor="#666"
-                    value={formData.vehicle_no}
-                    onChangeText={text => {
-                      handleChange('vehicle_no')(text);
-                      if (errors.vehicle_no)
-                        setErrors(p => ({...p, vehicle_no: null}));
-                    }}
-                    autoCapitalize="characters"
-                  />
-                  {errors.vehicle_no ? (
-                    <Text style={styles.errorText}>{errors.vehicle_no}</Text>
-                  ) : null}
-                </View>
-              )}
+                  <View style={styles.nameContain}>
+                    <Text style={styles.fieldLabel}>Vehicle Number *</Text>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder="e.g. MH12AB1234"
+                      placeholderTextColor="#666"
+                      value={formData.vehicle_no}
+                      onChangeText={text => {
+                        handleChange('vehicle_no')(text);
+                        if (errors.vehicle_no)
+                          setErrors(p => ({ ...p, vehicle_no: null }));
+                      }}
+                      autoCapitalize="characters"
+                    />
+                    {errors.vehicle_no ? (
+                      <Text style={styles.errorText}>{errors.vehicle_no}</Text>
+                    ) : null}
+                  </View>
+                )}
             </View>
 
             {/* ══ SECTION 4 — Visit Location ══ */}
@@ -557,7 +569,7 @@ export default function AddVisitors() {
               placeholder="Choose building"
               onChangeValue={value => {
                 handleChange('apartment_name')(value);
-                if (errors.apartment) setErrors(p => ({...p, apartment: null}));
+                if (errors.apartment) setErrors(p => ({ ...p, apartment: null }));
               }}
             />
             {errors.apartment ? (
@@ -572,7 +584,7 @@ export default function AddVisitors() {
                   placeholder="Floor"
                   onChangeValue={value => {
                     handleChange('floor_no')(value);
-                    if (errors.floor) setErrors(p => ({...p, floor: null}));
+                    if (errors.floor) setErrors(p => ({ ...p, floor: null }));
                   }}
                 />
                 {errors.floor ? (
@@ -586,7 +598,7 @@ export default function AddVisitors() {
                   placeholder="Flat"
                   onChangeValue={value => {
                     handleChange('flat_no')(value);
-                    if (errors.flat) setErrors(p => ({...p, flat: null}));
+                    if (errors.flat) setErrors(p => ({ ...p, flat: null }));
                   }}
                 />
                 {errors.flat ? (
@@ -610,8 +622,8 @@ export default function AddVisitors() {
             {/* ── Submit Button ── */}
             <LinearGradient
               colors={['#43A049', '#27A697']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 1}}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.buttonContainer}>
               <Button
                 mode="contained"

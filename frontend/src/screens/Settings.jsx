@@ -1,24 +1,32 @@
-import { RefreshControl, ScrollView, View, Text, Dimensions } from 'react-native';
+import { RefreshControl, ScrollView, View, Text, Dimensions, TextInput } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import useFunctions from '../hooks/useFunctions';
 import { AnimatedScreen } from '../components/AnimatedScreen';
 import { useCallback, useContext, useState } from 'react';
 import { MyContext } from '../context/ContextProvider';
-import { ActivityIndicator, Avatar, Button, Divider, Icon, IconButton, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Divider, Icon, IconButton, TextInput as PaperInput } from 'react-native-paper';
 import { Styles } from '../styles/Settings';
 import LinearGradient from 'react-native-linear-gradient';
+import DeleteAccountModal from '../components/DeleteAccountModal';
+import FinalDeleteConfirmationModal from '../components/FinalDeleteConfirmationModal';
 
 export default function SettingScreen() {
     const {
         loading, userData, refreshKey, refreshing, onRefresh, visitorData, orientation, setGradientColor, userDataToUpdate, userPasswordUpdate, handleChange
     } = useContext(MyContext);
-    const { Wrapper, handleUpdateUserData, handleUpdateUserPassword } = useFunctions();
+    const {
+        Wrapper, handleUpdateUserData, handleUpdateUserPassword, handleVerifyPassword, handleDeleteUserAccount
+    } = useFunctions();
 
     const [passwordVisible, setPasswordVisible] = useState({ current: false, newPass: false, confirm: false });
     const route = useRoute();
     const navigation = useNavigation();
     const [isEditing, setIsEditing] = useState(false);
     const [showForm, setShowForm] = useState(false);
+    const [showDangerZone, setShowDangerZone] = useState(false);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [isFinalConfirmVisible, setIsFinalConfirmVisible] = useState(false);
+
     const { height, width } = Dimensions.get('window');
     const isPortrait = orientation === 'portrait';
     const styles = Styles({ width, height, isPortrait });
@@ -60,8 +68,34 @@ export default function SettingScreen() {
         }
     };
 
+    const onVerifyIdentity = (event) => {
+        handleVerifyPassword(event, () => {
+            setIsDeleteModalVisible(false);
+            setIsFinalConfirmVisible(true);
+        });
+    };
+
+    const handlePermanentDelete = async () => {
+        await handleDeleteUserAccount();
+        setIsFinalConfirmVisible(false);
+    };
+
     return (
         <View style={styles.container}>
+            <DeleteAccountModal
+                visible={isDeleteModalVisible}
+                onDismiss={() => setIsDeleteModalVisible(false)}
+                onConfirm={(event) => onVerifyIdentity(event)}
+                loading={loading} // MyContext se loading state
+                styles={styles}
+            />
+            <FinalDeleteConfirmationModal
+                visible={isFinalConfirmVisible}
+                onDismiss={() => setIsFinalConfirmVisible(false)}
+                onConfirm={handlePermanentDelete}
+                loading={loading}
+            />
+
             <View style={styles.header}>
                 <IconButton icon="arrow-left" size={24} color="#fff" onPress={() => navigation.goBack()} iconColor="#fff" />
                 <View>
@@ -102,136 +136,106 @@ export default function SettingScreen() {
                             <Icon source="circle" size={10} color="#1B7EDA" />
                             <Text style={styles.sectionTitle}>Personal Information</Text>
                             <View style={styles.editIconContainer}>
-                                <IconButton
-                                    mode='outlined'
-                                    icon={isEditing ? "content-save-outline" : "pencil-outline"}
-                                    iconColor='#fff'
-                                    size={15}
-                                    onPress={toggleEditMode}
-                                />
+                                {loading ? (
+                                    <ActivityIndicator size="small" color="#fff" />
+                                ) : (
+                                    <IconButton
+                                        mode='outlined'
+                                        icon={isEditing ? "content-save-outline" : "pencil-outline"}
+                                        iconColor='#fff'
+                                        size={15}
+                                        onPress={toggleEditMode}
+                                    />
+                                )}
                             </View>
                         </View>
                         <View style={styles.infoItem}>
-                            {!isPortrait && (
-                                <View style={styles.inputContainer}>
-                                    <View style={styles.inputFieldWrapper}>
-                                        <View style={{ width: "100%" }}>
-                                            <Text style={styles.label}>First Name</Text>
-                                            <TextInput
-                                                left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
-                                                style={[styles.inputField, {
-                                                    backgroundColor: "#1D2C2D", borderColor: "#1E88E5", width: "100%", marginTop: 5,
-                                                }]}
-                                                textColor='#fff'
-                                                placeholder="First Name"
-                                                placeholderTextColor="#aaa"
-                                                value={userDataToUpdate?.first_name || ''}
-                                                keyboardType="default"
-                                                onChangeText={(text) => handleChange("first_name")(text)}
-                                                underlineColor="transparent"
-                                                activeUnderlineColor="transparent"
-                                                cursorColor='#fff'
-                                                editable={isEditing}
-                                            />
-                                        </View>
-                                    </View>
-                                    <View style={{ width: "48%" }}>
-                                        <Text style={styles.label}>Last Name</Text>
+                            <View style={styles.nameContainer}>
+                                <View style={{ flex: 1, width: '48%' }}>
+                                    <Text style={styles.label}>First Name</Text>
+                                    <View style={[styles.inputFieldWrapper, { borderColor: "#1E88E5" }]}>
+                                        <Icon source="account-outline" size={20} color="#1E88E5" />
                                         <TextInput
-                                            left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
-                                            style={[styles.inputField, {
-                                                backgroundColor: "#1D2C2D", borderColor: "#1E88E5", width: "100%", marginTop: 5,
-                                            }]}
-                                            textColor='#fff'
-                                            placeholder="Last Name"
-                                            placeholderTextColor="#aaa"
-                                            value={userDataToUpdate?.last_name || ''}
-                                            keyboardType="default"
-                                            onChangeText={(text) => handleChange("last_name")(text)}
-                                            underlineColor="transparent"
-                                            activeUnderlineColor="transparent"
-                                            cursorColor='#fff'
+                                            style={styles.nativeInput}
+                                            value={userDataToUpdate?.first_name || ''}
+                                            onChangeText={(text) => handleChange("first_name")(text)}
+                                            placeholder="First Name"
+                                            placeholderTextColor="#888"
                                             editable={isEditing}
+                                            cursorColor="#fff"
                                         />
                                     </View>
                                 </View>
-                            )}
-                            {isPortrait && (
-                                <>
-                                    <Text style={styles.label}>First Name</Text>
-                                    <TextInput
-                                        left={<TextInput.Icon icon="account-outline" color="#1E88E5" />}
-                                        style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
-                                        textColor='#fff'
-                                        placeholder="First Name"
-                                        placeholderTextColor="#aaa"
-                                        value={userDataToUpdate?.first_name || ''}
-                                        keyboardType="default"
-                                        onChangeText={(text) => handleChange("first_name")(text)}
-                                        underlineColor="transparent"
-                                        activeUnderlineColor="transparent"
-                                        cursorColor='#fff'
-                                        editable={isEditing}
-                                    />
-                                    <Text style={[styles.label, { marginTop: 10 }]}>Last Name</Text>
-                                    <TextInput
-                                        left={<TextInput.Icon icon="account-outline" color="#26A69A" />}
-                                        style={[styles.inputField, { backgroundColor: "#202D26", borderColor: "#26A69A" }]}
-                                        textColor='#fff'
-                                        placeholder="Last Name"
-                                        placeholderTextColor="#aaa"
-                                        value={userDataToUpdate?.last_name || ''}
-                                        keyboardType="default"
-                                        onChangeText={(text) => handleChange("last_name")(text)}
-                                        underlineColor="transparent"
-                                        activeUnderlineColor="transparent"
-                                        cursorColor='#fff'
-                                        editable={isEditing}
-                                    />
-                                </>
-                            )}
+
+                                {/* Last Name Field */}
+                                <View style={{ flex: 1, width: '48%' }}>
+                                    <Text style={styles.label}>Last Name</Text>
+                                    <View
+                                        style={[
+                                            styles.inputFieldWrapper, { backgroundColor: "#202D26", borderColor: "#26A69A" }
+                                        ]}
+                                    >
+                                        <Icon source="account-outline" size={20} color="#26A69A" />
+                                        <TextInput
+                                            style={styles.nativeInput}
+                                            value={userDataToUpdate?.last_name || ''}
+                                            onChangeText={(text) => handleChange("last_name")(text)}
+                                            placeholder="Last Name"
+                                            placeholderTextColor="#888"
+                                            editable={isEditing}
+                                            cursorColor="#fff"
+                                        />
+                                    </View>
+                                </View>
+                            </View>
                             <Text style={[styles.label, { marginTop: 10 }]}>Phone Number</Text>
-                            <TextInput
-                                left={<TextInput.Icon icon="phone-outline" color="#1E88E5" />}
-                                style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
-                                textColor='#fff'
-                                placeholder="Phone Number"
-                                placeholderTextColor="#aaa"
-                                value={userDataToUpdate?.phone_no != null ? String(userDataToUpdate.phone_no) : ''}
-                                keyboardType="numeric"
-                                onChangeText={(text) => handleChange("phone_no")(text)}
-                                underlineColor="transparent"
-                                activeUnderlineColor="transparent"
-                                cursorColor='#fff'
-                                editable={isEditing}
-                            />
+                            <View style={[styles.inputFieldWrapper, { borderColor: "#1E88E5", marginTop: 0 }]}>
+                                <Icon source="phone-outline" size={20} color="#1E88E5" />
+                                <TextInput
+                                    style={styles.nativeInput}
+                                    value={userDataToUpdate?.phone_no != null ? String(userDataToUpdate.phone_no) : ''}
+                                    onChangeText={(text) => handleChange("phone_no")(text)}
+                                    placeholder="Phone Number"
+                                    placeholderTextColor="#888"
+                                    keyboardType="numeric"
+                                    editable={isEditing}
+                                    cursorColor="#fff"
+                                />
+                            </View>
+
+                            {/* Email Field */}
                             <Text style={[styles.label, { marginTop: 10 }]}>Email Address</Text>
-                            <TextInput
-                                left={<TextInput.Icon icon="email-outline" color="#26A69A" />}
-                                style={[styles.inputField, { backgroundColor: "#202D26", borderColor: "#26A69A" }]}
-                                textColor='#fff'
-                                placeholder="Email Address"
-                                placeholderTextColor="#aaa"
-                                value={userDataToUpdate?.email || ''}
-                                keyboardType="email-address"
-                                onChangeText={(text) => handleChange("email")(text)}
-                                underlineColor="transparent"
-                                activeUnderlineColor="transparent"
-                                cursorColor='#fff'
-                                editable={isEditing}
-                            />
+                            <View
+                                style={[
+                                    styles.inputFieldWrapper,
+                                    { backgroundColor: "#202D26", borderColor: "#26A69A", marginTop: 0 }
+                                ]}
+                            >
+                                <Icon source="email-outline" size={20} color="#26A69A" />
+                                <TextInput
+                                    style={styles.nativeInput}
+                                    value={userDataToUpdate?.email || ''}
+                                    onChangeText={(text) => handleChange("email")(text)}
+                                    placeholder="Email Address"
+                                    placeholderTextColor="#888"
+                                    keyboardType="email-address"
+                                    editable={isEditing}
+                                    cursorColor="#fff"
+                                    autoCapitalize="none"
+                                />
+                            </View>
                         </View>
                     </View>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleContainer}>
                             <Icon source="circle" size={10} color="#1B7EDA" />
-                            <Text style={styles.sectionTitle}>Security Information</Text>
+                            <Text style={styles.sectionTitle}>Security Settings</Text>
                         </View>
                         <View style={styles.infoItem}>
                             <View style={styles.securityContainer}>
                                 <Icon source="shield-lock" size={40} color="#EE4242" />
                                 <View style={styles.securityTextContainer}>
-                                    <Text style={styles.securityLabel}>Security Settings</Text>
+                                    <Text style={styles.securityLabel}>Password Settings</Text>
                                     <Text style={styles.securityDescription}>Manage your password and security preferences</Text>
                                 </View>
                             </View>
@@ -246,26 +250,10 @@ export default function SettingScreen() {
                             {showForm && (
                                 <>
                                     <Divider style={styles.divider} />
-                                    <Text style={styles.label}>Current Password</Text>
-                                    <TextInput
-                                        left={<TextInput.Icon icon="lock-outline" color="#1E88E5" />}
-                                        right={<TextInput.Icon icon={passwordVisible.current ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('current')} />}
-                                        style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
-                                        textColor='#fff'
-                                        placeholder="Current Password"
-                                        placeholderTextColor="#aaa"
-                                        value={userPasswordUpdate?.current_password || ''}
-                                        keyboardType="default"
-                                        onChangeText={(text) => handleChange("current_password")(text)}
-                                        underlineColor="transparent"
-                                        activeUnderlineColor="transparent"
-                                        cursorColor='#fff'
-                                        secureTextEntry={!passwordVisible.current}
-                                    />
                                     <Text style={[styles.label, { marginTop: 10 }]}>New Password</Text>
-                                    <TextInput
-                                        left={<TextInput.Icon icon="lock-outline" color="#26A69A" />}
-                                        right={<TextInput.Icon icon={passwordVisible.newPass ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('newPass')} />}
+                                    <PaperInput
+                                        left={<PaperInput.Icon icon="lock-outline" color="#26A69A" />}
+                                        right={<PaperInput.Icon icon={passwordVisible.newPass ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('newPass')} />}
                                         style={[styles.inputField, { backgroundColor: "#202D26", borderColor: "#26A69A" }]}
                                         textColor='#fff'
                                         placeholder="New Password"
@@ -279,9 +267,9 @@ export default function SettingScreen() {
                                         secureTextEntry={!passwordVisible.newPass}
                                     />
                                     <Text style={[styles.label, { marginTop: 10 }]}>Confirm New Password</Text>
-                                    <TextInput
-                                        left={<TextInput.Icon icon="lock-outline" color="#1E88E5" />}
-                                        right={<TextInput.Icon icon={passwordVisible.confirm ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('confirm')} />}
+                                    <PaperInput
+                                        left={<PaperInput.Icon icon="lock-outline" color="#1E88E5" />}
+                                        right={<PaperInput.Icon icon={passwordVisible.confirm ? "eye-outline" : "eye-off-outline"} color="#aaa" onPress={() => togglePasswordVisibility('confirm')} />}
                                         style={[styles.inputField, { backgroundColor: "#1D2C2D", borderColor: "#1E88E5" }]}
                                         textColor='#fff'
                                         placeholder="Confirm New Password"
@@ -304,6 +292,60 @@ export default function SettingScreen() {
                                         {loading ? <ActivityIndicator size="small" color="#fff" /> : "Update Password"}
                                     </Button>
                                 </>
+                            )}
+                        </View>
+                        <View style={styles.sectionTitleContainer}>
+                            <Icon source="circle" size={10} color="#FF5252" />
+                            <Text style={styles.sectionTitle}>Danger Zone</Text>
+                        </View>
+                        <View style={styles.infoItem}>
+                            {/* Header with Icon, Title, and Subtitle */}
+                            <View style={styles.dangerContainer}>
+                                <Icon source="alert-octagon" size={40} color="#FF5252" />
+                                <View style={styles.securityTextContainer}>
+                                    <Text style={styles.securityLabel}>Account Deletion</Text>
+                                    <Text style={styles.securityDescription}>
+                                        Permanently remove your account and data
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* Toggle Button */}
+                            <Button
+                                icon={showDangerZone ? "chevron-up" : "alert-remove-outline"}
+                                children={showDangerZone ? "Cancel Deletion" : "Delete Account"}
+                                mode="contained-tonal"
+                                style={[styles.button, { backgroundColor: showDangerZone ? '#444' : 'rgba(255, 82, 82, 0.15)' }]}
+                                labelStyle={[styles.buttonLabelStyle, { color: '#FF5252' }]}
+                                onPress={() => setShowDangerZone(!showDangerZone)}
+                            />
+
+                            {/* Expandable Content */}
+                            {showDangerZone && (
+                                <View style={styles.dangerFormContent}>
+                                    <Divider style={[styles.divider, { backgroundColor: 'rgba(255, 82, 82, 0.2)' }]} />
+
+                                    <View style={{ marginBottom: 15 }}>
+                                        <Text style={[styles.label, { color: '#FF8A80', fontWeight: '700', marginBottom: 5 }]}>
+                                            Warning: This is permanent
+                                        </Text>
+                                        <Text style={[styles.securityDescription, { color: '#B0BEC5' }]}>
+                                            • All visitor entry records will be deleted.{"\n"}
+                                            • Your profile and settings will be removed.{"\n"}
+                                            • This action cannot be reversed.
+                                        </Text>
+                                    </View>
+
+                                    <Button
+                                        icon="trash-can-outline"
+                                        mode="contained"
+                                        onPress={() => setIsDeleteModalVisible(true)}
+                                        style={[styles.button, { backgroundColor: '#EE4242' }]}
+                                        labelStyle={styles.buttonLabelStyle}
+                                    >
+                                        Delete Permanent
+                                    </Button>
+                                </View>
                             )}
                         </View>
                     </View>

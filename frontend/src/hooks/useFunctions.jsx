@@ -1,10 +1,10 @@
-import React, {useContext} from 'react';
-import {MyContext} from '../context/ContextProvider';
-import {Appbar, Icon} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
+import React, { useContext } from 'react';
+import { MyContext } from '../context/ContextProvider';
+import { Appbar, Icon } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image, StyleSheet, View} from 'react-native';
-import {BACKEND_URL} from '../utils/constants';
+import { Image, StyleSheet, View } from 'react-native';
+import { BACKEND_URL } from '../utils/constants';
 
 export default function useFunctions() {
   const {
@@ -25,6 +25,7 @@ export default function useFunctions() {
     userPasswordUpdate,
     updateFlatFormData,
     updateVisitorFormData,
+    verifyPassword
   } = useContext(MyContext);
   const navigation = useNavigation();
 
@@ -59,7 +60,7 @@ export default function useFunctions() {
         handleSetNull();
         navigation.reset({
           index: 0,
-          routes: [{name: 'Login'}],
+          routes: [{ name: 'Login' }],
         });
       }
     } catch (error) {
@@ -106,7 +107,7 @@ export default function useFunctions() {
         triggerDataRefresh();
         navigation.reset({
           index: 0,
-          routes: [{name: 'New Entry'}],
+          routes: [{ name: 'New Entry' }],
         });
       }
     } catch (error) {
@@ -184,7 +185,7 @@ export default function useFunctions() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({...updateApartment, id: Number(id)}),
+          body: JSON.stringify({ ...updateApartment, id: Number(id) }),
         },
       );
 
@@ -232,7 +233,7 @@ export default function useFunctions() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({id: Number(id)}),
+          body: JSON.stringify({ id: Number(id) }),
         },
       );
 
@@ -328,7 +329,7 @@ export default function useFunctions() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({...updateFlatFormData, id: Number(id)}),
+          body: JSON.stringify({ ...updateFlatFormData, id: Number(id) }),
         },
       );
 
@@ -376,7 +377,7 @@ export default function useFunctions() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({id: Number(id)}),
+          body: JSON.stringify({ id: Number(id) }),
         },
       );
 
@@ -507,7 +508,7 @@ export default function useFunctions() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({...updateVisitorFormData, id: Number(id)}),
+          body: JSON.stringify({ ...updateVisitorFormData, id: Number(id) }),
         },
       );
 
@@ -557,7 +558,7 @@ export default function useFunctions() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({id: Number(id)}),
+          body: JSON.stringify({ id: Number(id) }),
         },
       );
 
@@ -598,7 +599,7 @@ export default function useFunctions() {
       const token = await AsyncStorage.getItem('token');
       const id = await AsyncStorage.getItem('id');
       const response = await fetch(
-        `${BACKEND_URL}/api/updateUserData?user_id=${Number(id)}`,
+        `${BACKEND_URL}/api/auth/updateUserData?user_id=${Number(id)}`,
         {
           method: 'PUT',
           headers: {
@@ -646,7 +647,7 @@ export default function useFunctions() {
       const token = await AsyncStorage.getItem('token');
       const id = await AsyncStorage.getItem('id');
       const response = await fetch(
-        `${BACKEND_URL}/api/updateUserPassword?user_id=${Number(id)}`,
+        `${BACKEND_URL}/api/auth/updateUserPassword?user_id=${Number(id)}`,
         {
           method: 'PUT',
           headers: {
@@ -687,6 +688,97 @@ export default function useFunctions() {
     }
   }
 
+  async function handleVerifyPassword(event, onSuccess) {
+    if (event) event.preventDefault();
+    setLoading(true);
+
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const id = await AsyncStorage.getItem('id');
+      const response = await fetch(
+        `${BACKEND_URL}/api/auth/verifypassword?user_id=${Number(id)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(verifyPassword),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showToast({ type: 'error', title: 'Error', message: data.message });
+      } else {
+        showToast({ type: 'success', title: 'Verified', message: data.message });
+        handleSetNull(); // Password fields clear karne ke liye
+        if (onSuccess) onSuccess(); // Next modal kholne ke liye
+      }
+    } catch (error) {
+      showToast({ type: 'error', title: 'Oops!', message: error.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDeleteUserAccount() {
+    setLoading(true);
+
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const id = await AsyncStorage.getItem('id');
+
+      const response = await fetch(
+        `${BACKEND_URL}/api/auth/deleteuseraccount?user_id=${Number(id)}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showToast({
+          type: 'error',
+          title: 'Deletion Failed',
+          message: data.message
+        });
+      } else {
+        showToast({
+          type: 'success',
+          title: 'Account Deleted',
+          message: 'Your account and all data have been removed.'
+        });
+
+        // Account delete hone ke baad cleanup aur logout
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("id");
+        handleSetNull();
+        triggerDataRefresh();
+
+        // Login screen par redirect karein
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        });
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        title: 'Oops!',
+        message: error.message
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleLogoutAction() {
     try {
       toggleModal('menu', false);
@@ -716,45 +808,45 @@ export default function useFunctions() {
       title: title,
       backAction:
         route.name === 'Security Hub' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#61A9E9'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#61A9E9' }]}>
             <Icon source="shield-outline" size={25} color="#fff" />
           </View>
         ) : route.name === 'New Entry' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#7BBE89'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#7BBE89' }]}>
             <Image
               source={require('../../assets/icons/star.png')}
-              style={{width: 25, height: 25}}
+              style={{ width: 25, height: 25 }}
               tintColor="#fff"
             />
           </View>
         ) : route.name === 'Update Entry' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#9F64FD'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#9F64FD' }]}>
             <Image
               source={require('../../assets/icons/star.png')}
-              style={{width: 25, height: 25}}
+              style={{ width: 25, height: 25 }}
               tintColor="#fff"
             />
           </View>
         ) : route.name === 'Visitor Log' ||
           route.name === 'Visitor Details' ||
           route.name === 'CustomVisitors' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#6CCCF4'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#6CCCF4' }]}>
             <Icon source="account-outline" size={25} color="#fff" />
           </View>
         ) : route.name === 'Buildings' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#6CCBEE'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#6CCBEE' }]}>
             <Icon source="shield-outline" size={25} color="#fff" />
           </View>
         ) : route.name === 'Residential Units' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#EF7F70'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#EF7F70' }]}>
             <Icon source="shield-outline" size={25} color="#fff" />
           </View>
         ) : route.name === 'Settings' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#EF7F70'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#EF7F70' }]}>
             <Icon source="account-outline" size={25} color="#fff" />
           </View>
         ) : route.name === 'Analytics' ? (
-          <View style={[styles.iconContainer, {backgroundColor: '#F9B868'}]}>
+          <View style={[styles.iconContainer, { backgroundColor: '#F9B868' }]}>
             <Icon source="shield-outline" size={25} color="#fff" />
           </View>
         ) : (
@@ -782,7 +874,9 @@ export default function useFunctions() {
     handleDeleteVisitor,
     handleUpdateUserData,
     handleUpdateUserPassword,
+    handleVerifyPassword,
     handleLogoutAction,
+    handleDeleteUserAccount
   };
 }
 
@@ -793,7 +887,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 12,
     shadowColor: '#fff',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 4,
     elevation: 10,

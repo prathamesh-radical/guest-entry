@@ -1,6 +1,6 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
-export const Styles = ({width, height, isPortrait}) =>
+export const Styles = ({ width, height, isPortrait }) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -144,7 +144,7 @@ export const Styles = ({width, height, isPortrait}) =>
       paddingVertical: 3,
       elevation: 3,
       shadowColor: '#4CAF50',
-      shadowOffset: {width: 0, height: 4},
+      shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.3,
       shadowRadius: 8,
     },
@@ -158,28 +158,33 @@ export const Styles = ({width, height, isPortrait}) =>
     counterRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: '#3A3A3A', // Buttons ka background pure row pe apply kiya
+      borderRadius: 10,
+      width: 140, // Fixed width taaki alignment sahi rahe
+      height: 44,
+      overflow: 'hidden', // Corners rounded rakhne ke liye
+      borderWidth: 1,
+      borderColor: '#555',
       marginBottom: 15,
     },
     counterBtn: {
-      width: 40,
-      height: 40,
-      backgroundColor: '#3A3A3A',
-      borderRadius: 8,
+      flex: 1, // Equal space divide karega
+      height: '100%',
       alignItems: 'center',
       justifyContent: 'center',
-      borderWidth: 1,
-      borderColor: '#555',
+      // Background yahan se hata diya kyunki parent mein hai
     },
     counterValue: {
-      width: 60,
+      width: 50,
+      height: '100%',
       textAlign: 'center',
-      fontSize: 20,
+      textAlignVertical: 'center', // Android focus
+      fontSize: 18,
       fontWeight: 'bold',
       color: '#fff',
-      backgroundColor: '#2A2A2A',
-      paddingVertical: 6,
-      borderTopWidth: 1,
-      borderBottomWidth: 1,
+      backgroundColor: '#2A2A2A', // Beech wala part thoda dark
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
       borderColor: '#555',
     },
 

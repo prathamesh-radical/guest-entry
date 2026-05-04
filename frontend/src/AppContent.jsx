@@ -21,7 +21,7 @@ export default function AppContent() {
                 <Wrapper {...wrapperProps}>
                     <Navigation />
                 </Wrapper>
-                <StatusBar
+                <StatusBar  
                     animated={true}
                     backgroundColor="transparent"
                     barStyle="light-content"
